@@ -40,8 +40,8 @@ class PlayState extends FlxState
 		add(redMap);
 		add(whiteMap);
 		add(player);
-		add(player.whitePart);
-		add(player.redPart);
+		//add(player.whitePart);
+		//add(player.redPart);
 	}
 
 	override public function update(elapsed:Float):Void

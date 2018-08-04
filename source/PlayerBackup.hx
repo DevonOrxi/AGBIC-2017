@@ -14,11 +14,12 @@ import flixel.util.FlxColor;
  * @author A. Cid
  */
  
-class Player extends FlxSprite
+class PlayerBackup extends FlxSprite
 {
 	private var fsm:FlxFSM<Player>;
 	public var isWarping(get, null):Bool = false;
-	//public var whitePart(get, null):FlxSprite;
+	public var redPart(get, null):FlxSprite;
+	public var whitePart(get, null):FlxSprite;
 
 	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset) 
 	{
@@ -32,17 +33,31 @@ class Player extends FlxSprite
 		facing = FlxObject.RIGHT;
 		setSize(8, 13);
 		
-		loadGraphic(AssetPaths.charRedPart__png, true, 16, 16);
-		animation.add("idle", [0, 1, 2, 3], 6, true);
-		animation.add("hurt", [4], 6, false);
-		animation.add("run", [5, 6, 7], 6, true);
-		animation.add("jump", [8], 6, false);
-		animation.add("fall", [9], 6, false);
-		setFacingFlip(FlxObject.LEFT, true, false);
-		setFacingFlip(FlxObject.RIGHT, false, false);
-		setSize(8, 13);
-		facing = FlxObject.RIGHT;
-		color = Reg.colorPalette.colorBack;
+		redPart = new FlxSprite(x, y);
+		redPart.loadGraphic(AssetPaths.charRedPart__png, true, 16, 16);
+		redPart.animation.add("idle", [0, 1, 2, 3], 6, true);
+		redPart.animation.add("hurt", [4], 12, false);
+		redPart.animation.add("run", [5, 6, 7], 6, true);
+		redPart.animation.add("jump", [8], 6, false);
+		redPart.animation.add("fall", [9], 6, false);
+		redPart.setFacingFlip(FlxObject.LEFT, true, false);
+		redPart.setFacingFlip(FlxObject.RIGHT, false, false);
+		redPart.setSize(8, 13);
+		redPart.facing = FlxObject.RIGHT;
+		redPart.color = 0xED1E24;
+
+		whitePart = new FlxSprite(x, y);
+		whitePart.loadGraphic(AssetPaths.charWhitePart__png, true, 16, 16);
+		whitePart.animation.add("idle", [0, 1, 2, 3], 6, true);
+		whitePart.animation.add("hurt", [4], 6, false);
+		whitePart.animation.add("run", [5, 6, 7], 6, true);
+		whitePart.animation.add("jump", [8], 6, false);
+		whitePart.animation.add("fall", [9], 6, false);
+		whitePart.setFacingFlip(FlxObject.LEFT, true, false);
+		whitePart.setFacingFlip(FlxObject.RIGHT, false, false);
+		whitePart.setSize(8, 13);
+		whitePart.facing = FlxObject.RIGHT;
+		whitePart.color = 0xFFFFFF;		
 		
 		adjustBox();
 		
@@ -57,8 +72,14 @@ class Player extends FlxSprite
 	
 	override public function update(elapsed:Float):Void 
 	{
-		fsm.update(elapsed);		
-		adjustBox();		
+		fsm.update(elapsed);
+		
+		adjustBox();
+		redPart.x = x;
+		whitePart.x = x;
+		redPart.y = y;
+		whitePart.y = y;
+		
 		super.update(elapsed);
 	}
 	
@@ -69,32 +90,40 @@ class Player extends FlxSprite
 	
 	public function playAnim(name:String):Void
 	{
-		animation.play(name);
+		redPart.animation.play(name);
+		whitePart.animation.play(name);
 	}
 	
 	public function setFacing(direction:Int):Void
 	{
 		facing = direction;
+		redPart.facing = facing;
+		whitePart.facing = facing;
 	}
 	
 	public function startWarpTweens():Void
 	{
 		FlxTween.tween(this, {y: y + 16 * scale.y}, Reg.warpTime);
 		FlxTween.tween(scale, {y: 0}, Reg.warpTime / 2, {onComplete: halfTween});
-		FlxTween.tween(scale, {y: -scale.y}, Reg.warpTime);
+		FlxTween.tween(whitePart.scale, {y: -whitePart.scale.y}, Reg.warpTime);
+		FlxTween.tween(redPart.scale, {y: -redPart.scale.y}, Reg.warpTime);
 	}
 	
 	private function adjustBox():Void
 	{
-		var hor:Float = facing == FlxObject.RIGHT ? Reg.boxOffsetX : frameWidth - (Reg.boxOffsetX + width);
-		var ver:Float = !Reg.isWarped ? Reg.boxOffsetY : frameHeight - (Reg.boxOffsetY + height);
+		var hor:Float = (facing == FlxObject.RIGHT ? Reg.boxOffsetX : frameWidth - (Reg.boxOffsetX + width));
+		var ver:Float = (!Reg.isWarped ? Reg.boxOffsetY : frameHeight - (Reg.boxOffsetY + height));
 		
 		offset.set(hor, ver);
+		whitePart.offset.set(hor, ver);
+		redPart.offset.set(hor, ver);
 	}
 	
 	private function halfTween(tween:FlxTween):Void
 	{
-		color = Reg.isWarped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
+		var tempColor:FlxColor = redPart.color;
+		redPart.color = whitePart.color;
+		whitePart.color = tempColor;		
 		FlxTween.tween(scale, {y: Reg.isWarped ? -1 : 1}, Reg.warpTime / 2, {onComplete: fullTween});
 	}
 	
@@ -106,6 +135,16 @@ class Player extends FlxSprite
 	function get_isWarping():Bool 
 	{
 		return isWarping;
+	}
+
+	function get_redPart():FlxSprite
+	{
+		return redPart;
+	}
+
+	function get_whitePart():FlxSprite
+	{
+		return whitePart;
 	}
 }
 
@@ -130,7 +169,6 @@ class Conditions {
 		return (!owner.isWarping);
 	}
 }
-
 class Standing extends FlxFSMState<Player> {
 	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void 
 	{
@@ -158,11 +196,10 @@ class Standing extends FlxFSMState<Player> {
 		owner.setFacing(owner.velocity.x > 0 ? FlxObject.RIGHT : (owner.velocity.x < 0 ? FlxObject.LEFT : owner.facing));
 	}
 }
-
 class Jumping extends FlxFSMState<Player> {
 	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void 
 	{
-		owner.playAnim(owner.velocity.y > 0 ? "fall" : (owner.velocity.y < 0 ? "jump" : owner.animation.name));
+		owner.playAnim(owner.velocity.y > 0 ? "fall" : (owner.velocity.y < 0 ? "jump" : owner.redPart.animation.name));
 	}
 	
 	override public function update(elapsed:Float, owner:Player, fsm:FlxFSM<Player>):Void 
@@ -174,7 +211,7 @@ class Jumping extends FlxFSMState<Player> {
 		if (FlxG.keys.pressed.LEFT)
 			owner.velocity.x -= Reg.playerVelX;
 		
-		var anim:String = owner.animation.name;
+		var anim:String;
 		if (owner.velocity.y > 0) 
 		{
 			if (!Reg.isWarped)
@@ -189,12 +226,13 @@ class Jumping extends FlxFSMState<Player> {
 			else
 				anim = "jump";
 		}
+		else
+			anim = owner.redPart.animation.name;
 		
 		owner.playAnim(anim);
 		owner.setFacing(owner.velocity.x > 0 ? FlxObject.RIGHT : (owner.velocity.x < 0 ? FlxObject.LEFT : owner.facing));
 	}
 }
-
 class Warping extends FlxFSMState<Player> {
 	private var localWarping:Bool;
 	private var halfWarp:Bool;
