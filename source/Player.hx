@@ -79,7 +79,7 @@ class Player extends FlxSprite
 	
 	public function startWarpTweens():Void
 	{
-		FlxTween.tween(this, {y: y + 16 * scale.y}, Reg.warpTime);
+		FlxTween.tween(this, {y: y + height * scale.y}, Reg.warpTime);
 		FlxTween.tween(scale, {y: 0}, Reg.warpTime / 2, {onComplete: halfTween});
 		FlxTween.tween(scale, {y: -scale.y}, Reg.warpTime);
 	}
