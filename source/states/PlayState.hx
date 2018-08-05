@@ -1,5 +1,6 @@
-package;
+package states;
 
+import entities.Player;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxState;
@@ -40,8 +41,6 @@ class PlayState extends FlxState
 		add(redMap);
 		add(whiteMap);
 		add(player);
-		add(player.whitePart);
-		add(player.redPart);
 	}
 
 	override public function update(elapsed:Float):Void
