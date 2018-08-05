@@ -16,7 +16,7 @@
     <Width>25600</Width>
     <Height>24000</Height>
   </LevelMaximumSize>
-  <Filename>D:\Code\HaxeFlixel\Famicase\assets\data\famicase.oep</Filename>
+  <Filename>D:\Code\HaxeFlixel\Famicase\assets\data\level\famicase.oep</Filename>
   <AngleMode>Radians</AngleMode>
   <CameraEnabled>false</CameraEnabled>
   <CameraSize>
@@ -91,7 +91,7 @@
   <Tilesets>
     <Tileset>
       <Name>tiles_bg_white</Name>
-      <FilePath>..\images\tiles_bg_white.png</FilePath>
+      <FilePath>..\..\images\tiles\tiles_bg_white.png</FilePath>
       <TileSize>
         <Width>16</Width>
         <Height>16</Height>
@@ -100,7 +100,7 @@
     </Tileset>
     <Tileset>
       <Name>tiles_bg_red</Name>
-      <FilePath>..\images\tiles_bg_red.png</FilePath>
+      <FilePath>..\..\images\tiles\tiles_bg_red.png</FilePath>
       <TileSize>
         <Width>16</Width>
         <Height>16</Height>
@@ -109,7 +109,7 @@
     </Tileset>
     <Tileset>
       <Name>tiles_obj_on_red</Name>
-      <FilePath>..\images\tiles_obj_red.png</FilePath>
+      <FilePath>..\..\images\tiles\tiles_obj_red.png</FilePath>
       <TileSize>
         <Width>16</Width>
         <Height>16</Height>
@@ -118,7 +118,7 @@
     </Tileset>
     <Tileset>
       <Name>tiles_obj_on_white</Name>
-      <FilePath>..\images\tiles_obj_white.png</FilePath>
+      <FilePath>..\..\images\tiles\tiles_obj_white.png</FilePath>
       <TileSize>
         <Width>16</Width>
         <Height>16</Height>

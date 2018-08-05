@@ -22,25 +22,10 @@ class PlayState extends FlxState
 	{
 		super.create();
 
-		var loader:FlxOgmoLoader = new FlxOgmoLoader(AssetPaths.famicase__oel);
-		tilemapBgWhite = loader.loadTilemap(AssetPaths.tiles_bg_white__png, 16, 16, "bg_white");
-		tilemapBgRed = loader.loadTilemap(AssetPaths.tiles_bg_red__png, 16, 16, "bg_red");
-		tilemapObjWhite = loader.loadTilemap(AssetPaths.tiles_obj_white__png, 16, 16, "obj_over_white");
-		tilemapObjRed = loader.loadTilemap(AssetPaths.tiles_obj_red__png, 16, 16, "obj_over_red");
-
-		tilemapBgWhite.setTileProperties(0, FlxObject.NONE);
-		tilemapBgWhite.setTileProperties(1, FlxObject.ANY);
-		tilemapBgRed.setTileProperties(0, FlxObject.NONE);
-		tilemapBgRed.setTileProperties(1, FlxObject.ANY);
-		tilemapObjWhite.setTileProperties(0, FlxObject.NONE);
-		tilemapObjWhite.setTileProperties(1, FlxObject.ANY);
-		tilemapObjRed.setTileProperties(0, FlxObject.NONE);
-		tilemapObjRed.setTileProperties(1, FlxObject.ANY);
-
+		player = new Player();
 		FlxG.cameras.bgColor = 0xFFFF00FF;
 
-		player = new Player();
-		loader.loadEntities(placeEntities, "entities");
+		setTilemaps();
 
 		add(tilemapBgWhite);
 		add(tilemapBgRed);
@@ -66,6 +51,26 @@ class PlayState extends FlxState
 				FlxG.collide(tilemapObjWhite, player);
 			}
 		}
+	}
+	
+	private function setTilemaps()
+	{
+		var loader:FlxOgmoLoader = new FlxOgmoLoader(AssetPaths.famicase__oel);
+		tilemapBgWhite = loader.loadTilemap(AssetPaths.tiles_bg_white__png, 16, 16, "bg_white");
+		tilemapBgRed = loader.loadTilemap(AssetPaths.tiles_bg_red__png, 16, 16, "bg_red");
+		tilemapObjWhite = loader.loadTilemap(AssetPaths.tiles_obj_white__png, 16, 16, "obj_over_white");
+		tilemapObjRed = loader.loadTilemap(AssetPaths.tiles_obj_red__png, 16, 16, "obj_over_red");
+
+		tilemapBgWhite.setTileProperties(0, FlxObject.NONE);
+		tilemapBgWhite.setTileProperties(1, FlxObject.ANY);
+		tilemapBgRed.setTileProperties(0, FlxObject.NONE);
+		tilemapBgRed.setTileProperties(1, FlxObject.ANY);
+		tilemapObjWhite.setTileProperties(0, FlxObject.NONE);
+		tilemapObjWhite.setTileProperties(1, FlxObject.ANY);
+		tilemapObjRed.setTileProperties(0, FlxObject.NONE);
+		tilemapObjRed.setTileProperties(1, FlxObject.ANY);
+		
+		loader.loadEntities(placeEntities, "entities");
 	}
 
 	private function placeEntities(entityName:String, entityData:Xml):Void
