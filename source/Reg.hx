@@ -1,4 +1,5 @@
 package;
+import managers.ColorPaletteManager;
 import flixel.util.FlxColor;
 
 /**
@@ -16,5 +17,5 @@ class Reg
 	static public var playerJumpForce:Float = -128;
 	static public var isWarped:Bool = false;
 	static public var paletteIndex:Int = 0;
-	static public var colorPalette:ColorPaletteManager = ColorPaletteManager.instance;
+	static public var colorPalette:managers.ColorPaletteManager = managers.ColorPaletteManager.instance;
 }

@@ -1,4 +1,4 @@
-package;
+package entities;
 
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -7,7 +7,6 @@ import flixel.addons.util.FlxFSM;
 import flixel.addons.util.FlxFSM.FlxFSMState;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.tweens.FlxTween;
-import flixel.util.FlxColor;
 
 /**
  * ...
@@ -18,7 +17,6 @@ class Player extends FlxSprite
 {
 	private var fsm:FlxFSM<Player>;
 	public var isWarping(get, null):Bool = false;
-	//public var whitePart(get, null):FlxSprite;
 
 	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset) 
 	{
@@ -175,16 +173,9 @@ class Jumping extends FlxFSMState<Player> {
 			owner.velocity.x -= Reg.playerVelX;
 		
 		var anim:String = owner.animation.name;
-		if (owner.velocity.y > 0) 
+		if (owner.velocity.y != 0) 
 		{
 			if (!Reg.isWarped)
-				anim = "fall";
-			else
-				anim = "jump";
-		}
-		else if (owner.velocity.y < 0)
-		{
-			if (Reg.isWarped)
 				anim = "fall";
 			else
 				anim = "jump";
