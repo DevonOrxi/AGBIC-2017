@@ -29,7 +29,43 @@
   </LevelValueDefinitions>
   <LayerDefinitions>
     <LayerDefinition xsi:type="TileLayerDefinition">
-      <Name>tiles</Name>
+      <Name>bg_red</Name>
+      <Grid>
+        <Width>16</Width>
+        <Height>16</Height>
+      </Grid>
+      <ScrollFactor>
+        <X>1</X>
+        <Y>1</Y>
+      </ScrollFactor>
+      <ExportMode>CSV</ExportMode>
+    </LayerDefinition>
+    <LayerDefinition xsi:type="TileLayerDefinition">
+      <Name>bg_white</Name>
+      <Grid>
+        <Width>16</Width>
+        <Height>16</Height>
+      </Grid>
+      <ScrollFactor>
+        <X>1</X>
+        <Y>1</Y>
+      </ScrollFactor>
+      <ExportMode>CSV</ExportMode>
+    </LayerDefinition>
+    <LayerDefinition xsi:type="TileLayerDefinition">
+      <Name>obj_over_red</Name>
+      <Grid>
+        <Width>16</Width>
+        <Height>16</Height>
+      </Grid>
+      <ScrollFactor>
+        <X>1</X>
+        <Y>1</Y>
+      </ScrollFactor>
+      <ExportMode>CSV</ExportMode>
+    </LayerDefinition>
+    <LayerDefinition xsi:type="TileLayerDefinition">
+      <Name>obj_over_white</Name>
       <Grid>
         <Width>16</Width>
         <Height>16</Height>
@@ -54,8 +90,35 @@
   </LayerDefinitions>
   <Tilesets>
     <Tileset>
-      <Name>tiles</Name>
-      <FilePath>..\images\tiles.png</FilePath>
+      <Name>tiles_bg_white</Name>
+      <FilePath>..\images\tiles_bg_white.png</FilePath>
+      <TileSize>
+        <Width>16</Width>
+        <Height>16</Height>
+      </TileSize>
+      <TileSep>0</TileSep>
+    </Tileset>
+    <Tileset>
+      <Name>tiles_bg_red</Name>
+      <FilePath>..\images\tiles_bg_red.png</FilePath>
+      <TileSize>
+        <Width>16</Width>
+        <Height>16</Height>
+      </TileSize>
+      <TileSep>0</TileSep>
+    </Tileset>
+    <Tileset>
+      <Name>tiles_obj_on_red</Name>
+      <FilePath>..\images\tiles_obj_red.png</FilePath>
+      <TileSize>
+        <Width>16</Width>
+        <Height>16</Height>
+      </TileSize>
+      <TileSep>0</TileSep>
+    </Tileset>
+    <Tileset>
+      <Name>tiles_obj_on_white</Name>
+      <FilePath>..\images\tiles_obj_white.png</FilePath>
       <TileSize>
         <Width>16</Width>
         <Height>16</Height>
