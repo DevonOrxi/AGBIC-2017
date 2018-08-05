@@ -40,7 +40,7 @@ class Player extends FlxSprite
 		setFacingFlip(FlxObject.RIGHT, false, false);
 		setSize(8, 13);
 		facing = FlxObject.RIGHT;
-		color = Reg.colorPalette.colorBack;
+		setAutoColor();
 		
 		adjustBox();
 		
@@ -92,13 +92,18 @@ class Player extends FlxSprite
 	
 	private function halfTween(tween:FlxTween):Void
 	{
-		color = Reg.isWarped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
+		setAutoColor();
 		FlxTween.tween(scale, {y: Reg.isWarped ? -1 : 1}, Reg.warpTime / 2, {onComplete: fullTween});
 	}
 	
 	private function fullTween(tween:FlxTween):Void
 	{
 		switchWarp();
+	}
+	
+	public function setAutoColor()
+	{
+		color = Reg.isWarped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
 	}
 	
 	function get_isWarping():Bool 

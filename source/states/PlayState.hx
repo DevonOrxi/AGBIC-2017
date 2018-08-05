@@ -1,6 +1,8 @@
 package states;
 
 import entities.Player;
+import flixel.group.FlxGroup;
+import managers.ColorPaletteManager;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxState;
@@ -14,14 +16,14 @@ class PlayState extends FlxState
 	private var tilemapBgRed:FlxTilemap;
 	private var tilemapObjWhite:FlxTilemap;
 	private var tilemapObjRed:FlxTilemap;
-	
-	private var redMap:FlxTilemap;
-	private var whiteMap:FlxTilemap;
+	private var colorSwappables:FlxGroup;
 
 	override public function create():Void
 	{
 		super.create();
 
+		ColorPaletteManager.boot();
+		colorSwappables = new FlxGroup();
 		player = new Player();
 		FlxG.cameras.bgColor = 0xFFFF00FF;
 
@@ -38,6 +40,22 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		
+		collidePlayerWithTerrain();
+		paletteSwapCheck();
+	}
+	
+	private function paletteSwapCheck() 
+	{
+		if (FlxG.keys.justPressed.Q)
+		{
+			ColorPaletteManager.instance.addToIndex();
+			player.setAutoColor();
+			setLevelColors();
+		}
+	}
+	
+	private function collidePlayerWithTerrain() 
+	{
 		if(!player.isWarping)
 		{
 			if (Reg.isWarped)
@@ -56,9 +74,10 @@ class PlayState extends FlxState
 	private function setTilemaps()
 	{
 		var loader:FlxOgmoLoader = new FlxOgmoLoader(AssetPaths.famicase__oel);
+		
 		tilemapBgWhite = loader.loadTilemap(AssetPaths.tiles_bg_white__png, 16, 16, "bg_white");
-		tilemapBgRed = loader.loadTilemap(AssetPaths.tiles_bg_red__png, 16, 16, "bg_red");
-		tilemapObjWhite = loader.loadTilemap(AssetPaths.tiles_obj_white__png, 16, 16, "obj_over_white");
+		tilemapBgRed = loader.loadTilemap(AssetPaths.tiles_bg_white__png, 16, 16, "bg_red");
+		tilemapObjWhite = loader.loadTilemap(AssetPaths.tiles_obj_red__png, 16, 16, "obj_over_white");
 		tilemapObjRed = loader.loadTilemap(AssetPaths.tiles_obj_red__png, 16, 16, "obj_over_red");
 
 		tilemapBgWhite.setTileProperties(0, FlxObject.NONE);
@@ -70,7 +89,16 @@ class PlayState extends FlxState
 		tilemapObjRed.setTileProperties(0, FlxObject.NONE);
 		tilemapObjRed.setTileProperties(1, FlxObject.ANY);
 		
+		setLevelColors();
 		loader.loadEntities(placeEntities, "entities");
+	}
+	
+	private function setLevelColors()
+	{
+		tilemapBgWhite.color = ColorPaletteManager.instance.colorFront;
+		tilemapBgRed.color = ColorPaletteManager.instance.colorBack;
+		tilemapObjWhite.color = ColorPaletteManager.instance.colorBack;
+		tilemapObjRed.color = ColorPaletteManager.instance.colorFront;
 	}
 
 	private function placeEntities(entityName:String, entityData:Xml):Void
