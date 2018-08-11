@@ -7,13 +7,14 @@ import flixel.addons.util.FlxFSM;
 import flixel.addons.util.FlxFSM.FlxFSMState;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.tweens.FlxTween;
+import interfaces.IColorSwappable;
 
 /**
  * ...
  * @author A. Cid
  */
  
-class Player extends FlxSprite
+class Player extends FlxSprite implements IColorSwappable
 {
 	private var fsm:FlxFSM<Player>;
 	public var isWarping(get, null):Bool = false;
@@ -40,7 +41,7 @@ class Player extends FlxSprite
 		setFacingFlip(FlxObject.RIGHT, false, false);
 		setSize(8, 13);
 		facing = FlxObject.RIGHT;
-		setAutoColor();
+		setColors();
 		
 		adjustBox();
 		
@@ -92,7 +93,7 @@ class Player extends FlxSprite
 	
 	private function halfTween(tween:FlxTween):Void
 	{
-		setAutoColor();
+		setColors();
 		FlxTween.tween(scale, {y: Reg.isWarped ? -1 : 1}, Reg.warpTime / 2, {onComplete: fullTween});
 	}
 	
@@ -101,7 +102,7 @@ class Player extends FlxSprite
 		switchWarp();
 	}
 	
-	public function setAutoColor()
+	public function setColors()
 	{
 		color = Reg.isWarped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
 	}

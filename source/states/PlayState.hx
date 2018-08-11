@@ -2,28 +2,31 @@ package states;
 
 import entities.Player;
 import flixel.group.FlxGroup;
+import interfaces.IColorSwappable;
 import managers.ColorPaletteManager;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmoLoader;
 import flixel.tile.FlxTilemap;
+import utils.GeoOgmoLoader;
+import utils.GeoTilemap;
 
 class PlayState extends FlxState
 {
 	private var player:Player;
-	private var tilemapBgWhite:FlxTilemap;
-	private var tilemapBgRed:FlxTilemap;
-	private var tilemapObjWhite:FlxTilemap;
-	private var tilemapObjRed:FlxTilemap;
-	private var colorSwappables:FlxGroup;
+	private var tilemapBgWhite:GeoTilemap;
+	private var tilemapBgRed:GeoTilemap;
+	private var tilemapObjWhite:GeoTilemap;
+	private var tilemapObjRed:GeoTilemap;
+	private var tilemapGroup:FlxTypedGroup<GeoTilemap>;
 
 	override public function create():Void
 	{
 		super.create();
 
 		ColorPaletteManager.boot();
-		colorSwappables = new FlxGroup();
+		tilemapGroup = new FlxTypedGroup<GeoTilemap>();
 		player = new Player();
 		FlxG.cameras.bgColor = 0xFFFF00FF;
 
@@ -49,7 +52,7 @@ class PlayState extends FlxState
 		if (FlxG.keys.justPressed.Q)
 		{
 			ColorPaletteManager.instance.addToIndex();
-			player.setAutoColor();
+			player.setColors();
 			setLevelColors();
 		}
 	}
@@ -73,32 +76,25 @@ class PlayState extends FlxState
 	
 	private function setTilemaps()
 	{
-		var loader:FlxOgmoLoader = new FlxOgmoLoader(AssetPaths.famicase__oel);
+		var loader:GeoOgmoLoader = new GeoOgmoLoader(AssetPaths.famicase__oel);
 		
-		tilemapBgWhite = loader.loadTilemap(AssetPaths.tiles_bg_white__png, 16, 16, "bg_white");
-		tilemapBgRed = loader.loadTilemap(AssetPaths.tiles_bg_white__png, 16, 16, "bg_red");
-		tilemapObjWhite = loader.loadTilemap(AssetPaths.tiles_obj_red__png, 16, 16, "obj_over_white");
-		tilemapObjRed = loader.loadTilemap(AssetPaths.tiles_obj_red__png, 16, 16, "obj_over_red");
-
-		tilemapBgWhite.setTileProperties(0, FlxObject.NONE);
-		tilemapBgWhite.setTileProperties(1, FlxObject.ANY);
-		tilemapBgRed.setTileProperties(0, FlxObject.NONE);
-		tilemapBgRed.setTileProperties(1, FlxObject.ANY);
-		tilemapObjWhite.setTileProperties(0, FlxObject.NONE);
-		tilemapObjWhite.setTileProperties(1, FlxObject.ANY);
-		tilemapObjRed.setTileProperties(0, FlxObject.NONE);
-		tilemapObjRed.setTileProperties(1, FlxObject.ANY);
+		tilemapBgWhite = loader.loadGeoTilemap(AssetPaths.tiles_bg_white__png, 16, 16, "bg_white");
+		tilemapBgRed = loader.loadGeoTilemap(AssetPaths.tiles_bg_white__png, 16, 16, "bg_red");
+		tilemapObjWhite = loader.loadGeoTilemap(AssetPaths.tiles_obj_red__png, 16, 16, "obj_over_white");
+		tilemapObjRed = loader.loadGeoTilemap(AssetPaths.tiles_obj_red__png, 16, 16, "obj_over_red");
 		
-		setLevelColors();
+		tilemapBgWhite.init(true, true);
+		tilemapBgRed.init(false, true);
+		tilemapObjWhite.init(false, false);
+		tilemapObjRed.init(true, false);
+		
 		loader.loadEntities(placeEntities, "entities");
 	}
 	
 	private function setLevelColors()
 	{
-		tilemapBgWhite.color = ColorPaletteManager.instance.colorFront;
-		tilemapBgRed.color = ColorPaletteManager.instance.colorBack;
-		tilemapObjWhite.color = ColorPaletteManager.instance.colorBack;
-		tilemapObjRed.color = ColorPaletteManager.instance.colorFront;
+		for (map in tilemapGroup)
+			map.setColors();
 	}
 
 	private function placeEntities(entityName:String, entityData:Xml):Void
