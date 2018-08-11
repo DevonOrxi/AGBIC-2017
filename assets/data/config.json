@@ -1,10 +1,10 @@
 
 {
+	"testMode": "true",
 	"colors": [
 		{ "top": "0xFFFFFF", "bottom": "0xED1E24"},
 		{ "top": "0x490A3D", "bottom": "0xBD1550"},
 		{ "top": "0xC6A49A", "bottom": "0xE94E77"},
 		{ "top": "0x005F6B", "bottom": "0x00B4CC"}
-		
 	]
 }

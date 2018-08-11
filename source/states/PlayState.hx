@@ -24,7 +24,8 @@ class PlayState extends FlxState
 	override public function create():Void
 	{
 		super.create();
-
+		
+		Reg.initExternalData();
 		ColorPaletteManager.boot();
 		tilemapGroup = new FlxTypedGroup<GeoTilemap>();
 		player = new Player();

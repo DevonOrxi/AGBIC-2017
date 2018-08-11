@@ -1,6 +1,8 @@
 package;
 import managers.ColorPaletteManager;
 import flixel.util.FlxColor;
+import openfl.Assets;
+import haxe.Json;
 
 /**
  * ...
@@ -17,5 +19,16 @@ class Reg
 	static public var playerJumpForce:Float = -128;
 	static public var isWarped:Bool = false;
 	static public var paletteIndex:Int = 0;
-	static public var colorPalette:managers.ColorPaletteManager = managers.ColorPaletteManager.instance;
+	static public var colorPalette:ColorPaletteManager = ColorPaletteManager.instance;	
+	static public var configData(get, null): Dynamic;
+	
+	static public function initExternalData() {
+		var jsonString:String = Assets.getText(AssetPaths.config__json);
+		Reg.configData = Json.parse(jsonString);
+	}
+	
+	static function get_configData():Dynamic 
+	{
+		return configData;
+	}
 }

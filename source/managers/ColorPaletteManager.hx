@@ -1,7 +1,5 @@
 package managers;
 import flixel.util.FlxColor;
-import haxe.Json;
-import openfl.Assets;
 
 /**
  * Singleton for the array of color palettes
@@ -29,9 +27,7 @@ class ColorPaletteManager
 	}
 	
 	private function init() {
-		var jsonString:String = Assets.getText(AssetPaths.config__json); trace("stringed");
-		var data:Dynamic = Json.parse(jsonString); trace("parsed");
-		var colors = Lambda.array(data.colors);  trace("array...ed?");
+		var colors = Lambda.array(Reg.configData.colors);
 		
 		if (colors.length > 0)
 			for (c in colors) 
