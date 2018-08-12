@@ -28,7 +28,6 @@ class Player extends FlxSprite implements IColorSwappable {
 		setFacingFlip(FlxObject.LEFT, true, false);
 		setFacingFlip(FlxObject.RIGHT, false, false);
 		facing = FlxObject.RIGHT;
-		setSize(8, 13);
 		
 		loadGraphic(AssetPaths.charRedPart__png, true, 16, 16);
 		animation.add("idle", [0, 1, 2, 3], 6, true);
@@ -105,7 +104,7 @@ class Player extends FlxSprite implements IColorSwappable {
 class Conditions {
 	
 	public static function airborne(owner:Player):Bool {
-		return (!owner.isTouching(Reg.isWarped ? FlxObject.UP : FlxObject.DOWN));
+		return (!grounded(owner));
 	}
 	
 	public static function grounded(owner:Player):Bool {
@@ -120,7 +119,6 @@ class Conditions {
 		return (!owner.isWarping);
 	}
 }
-
 class Standing extends FlxFSMState<Player> {
 	
 	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void {
@@ -146,7 +144,6 @@ class Standing extends FlxFSMState<Player> {
 		owner.setFacing(owner.velocity.x > 0 ? FlxObject.RIGHT : (owner.velocity.x < 0 ? FlxObject.LEFT : owner.facing));
 	}
 }
-
 class Jumping extends FlxFSMState<Player> {
 	
 	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void {
@@ -165,16 +162,15 @@ class Jumping extends FlxFSMState<Player> {
 		
 		if (owner.velocity.y != 0) {
 			if (!Reg.isWarped)
-				anim = "fall";
+				anim = owner.velocity.y < 0 ? "jump" : "fall";
 			else
-				anim = "jump";
+				anim = owner.velocity.y < 0 ? "fall" : "jump";
 		}
 		
 		owner.playAnim(anim);
 		owner.setFacing(owner.velocity.x > 0 ? FlxObject.RIGHT : (owner.velocity.x < 0 ? FlxObject.LEFT : owner.facing));
 	}
 }
-
 class Warping extends FlxFSMState<Player> {
 	
 	private var localWarping:Bool;

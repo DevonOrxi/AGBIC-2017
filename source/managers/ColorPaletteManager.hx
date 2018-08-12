@@ -12,10 +12,9 @@ class ColorPaletteManager {
 	public var colorFront(get, null):Int;
 	
 	private var paletteIndex:Int = 0;
-	private var value(get, null):Array<Array<Int>> = [];
+	private var value:Array<Array<Int>> = [];
 
-	private function new() {
-	}
+	private function new() {}
 	
 	static public function boot() {
 		if (ColorPaletteManager.instance.value.length == 0)
@@ -36,10 +35,6 @@ class ColorPaletteManager {
 	
 	public function addToIndex(?val:Int = 1) {
 		paletteIndex = (paletteIndex + val) % value.length;
-	}
-	
-	function get_value():Array<Array<Int>> {
-		return value;
 	}
 	
 	function get_colorBack():Int {
