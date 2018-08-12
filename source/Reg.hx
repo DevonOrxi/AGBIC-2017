@@ -8,8 +8,7 @@ import haxe.Json;
  * ...
  * @author A. Cid
  */
-class Reg 
-{
+class Reg {
 	inline static public var playerVelX:Float = 96;
 	inline static public var warpTime:Float = 0.25;
 	inline static public var boxOffsetX:Float = 3;
@@ -27,8 +26,7 @@ class Reg
 		Reg.configData = Json.parse(jsonString);
 	}
 	
-	static function get_configData():Dynamic 
-	{
+	static function get_configData():Dynamic {
 		return configData;
 	}
 }

@@ -14,13 +14,12 @@ import interfaces.IColorSwappable;
  * @author A. Cid
  */
  
-class Player extends FlxSprite implements IColorSwappable
-{
+class Player extends FlxSprite implements IColorSwappable {
+	
 	private var fsm:FlxFSM<Player>;
 	public var isWarping(get, null):Bool = false;
 
-	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset) 
-	{
+	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset)  {
 		super(X, Y, SimpleGraphic);
 		
 		acceleration.y = Reg.playerGravity;
@@ -54,95 +53,81 @@ class Player extends FlxSprite implements IColorSwappable
 			.start(Standing);
 	}
 	
-	override public function update(elapsed:Float):Void 
-	{
+	override public function update(elapsed:Float):Void {
 		fsm.update(elapsed);		
 		adjustBox();		
 		super.update(elapsed);
 	}
 	
-	public function switchWarp():Void
-	{
+	public function switchWarp():Void {
 		isWarping = !isWarping;
 	}
 	
-	public function playAnim(name:String):Void
-	{
+	public function playAnim(name:String):Void {
 		animation.play(name);
 	}
 	
-	public function setFacing(direction:Int):Void
-	{
+	public function setFacing(direction:Int):Void {
 		facing = direction;
 	}
 	
-	public function startWarpTweens():Void
-	{
+	public function startWarpTweens():Void {
 		FlxTween.tween(this, {y: y + height * scale.y}, Reg.warpTime);
 		FlxTween.tween(scale, {y: 0}, Reg.warpTime / 2, {onComplete: halfTween});
 		FlxTween.tween(scale, {y: -scale.y}, Reg.warpTime);
 	}
 	
-	private function adjustBox():Void
-	{
+	private function adjustBox():Void {
 		var hor:Float = facing == FlxObject.RIGHT ? Reg.boxOffsetX : frameWidth - (Reg.boxOffsetX + width);
 		var ver:Float = !Reg.isWarped ? Reg.boxOffsetY : frameHeight - (Reg.boxOffsetY + height);
 		
 		offset.set(hor, ver);
 	}
 	
-	private function halfTween(tween:FlxTween):Void
-	{
+	private function halfTween(tween:FlxTween):Void {
 		setColors();
 		FlxTween.tween(scale, {y: Reg.isWarped ? -1 : 1}, Reg.warpTime / 2, {onComplete: fullTween});
 	}
 	
-	private function fullTween(tween:FlxTween):Void
-	{
+	private function fullTween(tween:FlxTween):Void {
 		switchWarp();
 	}
 	
-	public function setColors()
-	{
+	public function setColors() {
 		color = Reg.isWarped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
 	}
 	
-	function get_isWarping():Bool 
-	{
+	function get_isWarping():Bool {
 		return isWarping;
 	}
 }
 
 class Conditions {
-	public static function airborne(owner:Player):Bool
-	{
+	
+	public static function airborne(owner:Player):Bool {
 		return (!owner.isTouching(Reg.isWarped ? FlxObject.UP : FlxObject.DOWN));
 	}
 	
-	public static function grounded(owner:Player):Bool
-	{
+	public static function grounded(owner:Player):Bool {
 		return (owner.isTouching(Reg.isWarped ? FlxObject.UP : FlxObject.DOWN));
 	}
 	
-	public static function warping(owner:Player):Bool
-	{
+	public static function warping(owner:Player):Bool {
 		return (grounded(owner) && (FlxG.keys.justPressed.UP && Reg.isWarped) || (FlxG.keys.justPressed.DOWN && !Reg.isWarped));
 	}
 	
-	public static function warpFinished(owner:Player):Bool
-	{
+	public static function warpFinished(owner:Player):Bool {
 		return (!owner.isWarping);
 	}
 }
 
 class Standing extends FlxFSMState<Player> {
-	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void 
-	{
+	
+	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void {
 		checkRun(owner);
 	}
 	
-	override public function update(elapsed:Float, owner:Player, fsm:FlxFSM<Player>):Void 
-	{
+	override public function update(elapsed:Float, owner:Player, fsm:FlxFSM<Player>):Void {
 		owner.velocity.x = 0;
 		
 		if (FlxG.keys.pressed.RIGHT)
@@ -156,21 +141,19 @@ class Standing extends FlxFSMState<Player> {
 			owner.velocity.y = Reg.playerJumpForce;
 	}
 	
-	private function checkRun(owner:Player):Void
-	{
+	private function checkRun(owner:Player):Void {
 		owner.playAnim(owner.velocity.x != 0 ? "run" : "idle");
 		owner.setFacing(owner.velocity.x > 0 ? FlxObject.RIGHT : (owner.velocity.x < 0 ? FlxObject.LEFT : owner.facing));
 	}
 }
 
 class Jumping extends FlxFSMState<Player> {
-	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void 
-	{
+	
+	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void {
 		owner.playAnim(owner.velocity.y > 0 ? "fall" : (owner.velocity.y < 0 ? "jump" : owner.animation.name));
 	}
 	
-	override public function update(elapsed:Float, owner:Player, fsm:FlxFSM<Player>):Void 
-	{
+	override public function update(elapsed:Float, owner:Player, fsm:FlxFSM<Player>):Void {
 		owner.velocity.x = 0;
 		
 		if (FlxG.keys.pressed.RIGHT)
@@ -179,8 +162,8 @@ class Jumping extends FlxFSMState<Player> {
 			owner.velocity.x -= Reg.playerVelX;
 		
 		var anim:String = owner.animation.name;
-		if (owner.velocity.y != 0) 
-		{
+		
+		if (owner.velocity.y != 0) {
 			if (!Reg.isWarped)
 				anim = "fall";
 			else
@@ -193,11 +176,11 @@ class Jumping extends FlxFSMState<Player> {
 }
 
 class Warping extends FlxFSMState<Player> {
+	
 	private var localWarping:Bool;
 	private var halfWarp:Bool;
 	
-	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void 
-	{
+	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void {
 		localWarping = true;
 		halfWarp = false;
 		Reg.isWarped = !Reg.isWarped;
@@ -211,8 +194,7 @@ class Warping extends FlxFSMState<Player> {
 		owner.startWarpTweens();
 	}
 	
-	override public function exit(owner:Player):Void 
-	{
+	override public function exit(owner:Player):Void {
 		owner.acceleration.y = Reg.playerGravity;
 	}
 }

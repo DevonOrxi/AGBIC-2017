@@ -3,7 +3,6 @@ package interfaces;
 /**
  * @author A. Cid
  */
-interface IColorSwappable 
-{
+interface IColorSwappable {
 	public function setColors():Void;
 }

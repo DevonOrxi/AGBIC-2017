@@ -4,11 +4,11 @@ import states.PlayState;
 import flixel.FlxGame;
 import openfl.display.Sprite;
 
-class Main extends Sprite
-{
-	public function new()
-	{
+class Main extends Sprite {
+	
+	public function new() {
 		super();
 		addChild(new FlxGame(256, 240, states.PlayState));
 	}
+	
 }
