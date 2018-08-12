@@ -24,12 +24,7 @@ class Player extends FlxSprite implements IColorSwappable {
 		
 		acceleration.y = Reg.playerGravity;
 		
-		makeGraphic(16, 16, 0x00000000);
-		setFacingFlip(FlxObject.LEFT, true, false);
-		setFacingFlip(FlxObject.RIGHT, false, false);
-		facing = FlxObject.RIGHT;
-		
-		loadGraphic(AssetPaths.charRedPart__png, true, 16, 16);
+		loadGraphic(AssetPaths.charRedPart__png, true, Reg.tileWidth, Reg.);
 		animation.add("idle", [0, 1, 2, 3], 6, true);
 		animation.add("hurt", [4], 6, false);
 		animation.add("run", [5, 6, 7], 6, true);

@@ -14,6 +14,8 @@ class Reg {
 	inline static public var warpTime:Float = 0.25;
 	inline static public var boxOffsetX:Float = 3;
 	inline static public var boxOffsetY:Float = 3;
+	inline static public var tileWidth:Int = 16;
+	inline static public var tileHeight:Int = 16;
 	
 	static public var playerGravity:Float = 512;
 	static public var playerJumpForce:Float = -128;

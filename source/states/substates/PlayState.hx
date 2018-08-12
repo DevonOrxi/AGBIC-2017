@@ -1,15 +1,17 @@
 package states.substates;
 
-import entities.Player;
-import flixel.group.FlxGroup;
 import haxe.Json;
-import interfaces.IColorSwappable;
-import managers.ColorPaletteManager;
+import flixel.FlxSprite;
+import flixel.group.FlxGroup;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSubState;
 import flixel.addons.editors.ogmo.FlxOgmoLoader;
 import flixel.tile.FlxTilemap;
+
+import entities.Player;
+import interfaces.IColorSwappable;
+import managers.ColorPaletteManager;
 import managers.LevelManager;
 import utils.GeoOgmoLoader;
 import utils.GeoTilemap;
@@ -22,6 +24,7 @@ class PlayState extends FlxSubState {
 	private var tilemapObjWhite:GeoTilemap;
 	private var tilemapObjRed:GeoTilemap;
 	private var colorSwappables:Array<IColorSwappable> = [];
+	private var boundaries = new FlxTypedGroup<FlxSprite>();
 
 	override public function create():Void {
 		super.create();
@@ -33,6 +36,7 @@ class PlayState extends FlxSubState {
 		FlxG.cameras.bgColor = 0xFFFF00FF;
 
 		setTilemaps();
+		createBoundaries();
 		setColorSwappableArray();
 		addToState();
 	}
@@ -41,7 +45,12 @@ class PlayState extends FlxSubState {
 		super.update(elapsed);
 		
 		collidePlayerWithTerrain();
+		collidePlayerWithBoundaries();
 		paletteSwapCheck();
+	}
+	
+	private function collidePlayerWithBoundaries() {
+		FlxG.collide(boundaries, player);
 	}
 	
 	private function addToState() {
@@ -49,6 +58,7 @@ class PlayState extends FlxSubState {
 		add(tilemapBgRed);
 		add(tilemapObjWhite);
 		add(tilemapObjRed);
+		add(boundaries);
 		add(player);
 	}
 	
@@ -80,6 +90,35 @@ class PlayState extends FlxSubState {
 		}
 	}
 	
+	private function createBoundaries() {
+		var width = Std.int(tilemapBgRed.width);
+		var height = Std.int(tilemapBgRed.height);
+		var sprite:FlxSprite = new FlxSprite();		
+		
+		for (i in 0...4) {
+			switch (i) {
+				case 0:
+					//	LEFT
+					sprite = new FlxSprite(-Reg.tileWidth, -Reg.tileHeight);
+					sprite.makeGraphic(Reg.tileWidth, height + 2 * Reg.tileHeight);
+				case 1:
+					//	TOP
+					sprite = new FlxSprite(-Reg.tileWidth, -Reg.tileHeight);
+					sprite.makeGraphic(width + 2 * Reg.tileHeight, Reg.tileHeight);
+				case 2:
+					//	RIGHT
+					sprite = new FlxSprite(width, -Reg.tileHeight);
+					sprite.makeGraphic(Reg.tileWidth, height + 2 * Reg.tileHeight);
+				case 3:
+					//	BOTTOM
+					sprite = new FlxSprite(-Reg.tileWidth, height);
+					sprite.makeGraphic(width + 2 * Reg.tileHeight, Reg.tileHeight);
+			}
+			sprite.immovable = true;
+			boundaries.add(sprite);
+		}
+	}
+	
 	private function setTilemaps() {
 		var isTestMode = Reg.configData.testMode == "true";
 		
@@ -88,10 +127,10 @@ class PlayState extends FlxSubState {
 			AssetPaths.famicase__oel :
 			"assets/data/level/progression/" + Reg.levelManager.getCurrentLevelID() + ".oel");
 		
-		tilemapBgWhite = loader.loadGeoTilemap(AssetPaths.tiles_bg_white__png, 16, 16, "bg_white");
-		tilemapBgRed = loader.loadGeoTilemap(AssetPaths.tiles_bg_white__png, 16, 16, "bg_red");
-		tilemapObjWhite = loader.loadGeoTilemap(AssetPaths.tiles_obj_red__png, 16, 16, "obj_over_white");
-		tilemapObjRed = loader.loadGeoTilemap(AssetPaths.tiles_obj_red__png, 16, 16, "obj_over_red");
+		tilemapBgWhite = loader.loadGeoTilemap(AssetPaths.tiles_bg_white__png, Reg.tileWidth, Reg.tileHeight, "bg_white");
+		tilemapBgRed = loader.loadGeoTilemap(AssetPaths.tiles_bg_white__png, Reg.tileWidth, Reg.tileHeight, "bg_red");
+		tilemapObjWhite = loader.loadGeoTilemap(AssetPaths.tiles_obj_red__png, Reg.tileWidth, Reg.tileHeight, "obj_over_white");
+		tilemapObjRed = loader.loadGeoTilemap(AssetPaths.tiles_obj_red__png, Reg.tileWidth, Reg.tileHeight, "obj_over_red");
 		
 		tilemapBgWhite.init(true, true);
 		tilemapBgRed.init(false, true);
