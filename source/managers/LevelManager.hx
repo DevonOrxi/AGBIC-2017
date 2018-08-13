@@ -17,7 +17,7 @@ class LevelManager {
 		if (LevelManager.instance.value.length == 0)
 			LevelManager.instance.init();
 		else
-			trace("Failed to re-boot ColorPaletteManager");
+			trace("Failed to re-boot LevelManager");
 	}
 	
 	private function init() {

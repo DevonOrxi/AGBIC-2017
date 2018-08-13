@@ -5,9 +5,11 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.addons.util.FlxFSM;
 import flixel.addons.util.FlxFSM.FlxFSMState;
+import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.tweens.FlxTween;
 import interfaces.IColorSwappable;
+import Reg.WarpStatus;
 
 /**
  * ...
@@ -24,7 +26,7 @@ class Player extends FlxSprite implements IColorSwappable {
 		
 		acceleration.y = Reg.playerGravity;
 		
-		loadGraphic(AssetPaths.charRedPart__png, true, Reg.tileWidth, Reg.);
+		loadGraphic(AssetPaths.charRedPart__png, true, Reg.tileWidth, Reg.tileHeight);
 		animation.add("idle", [0, 1, 2, 3], 6, true);
 		animation.add("hurt", [4], 6, false);
 		animation.add("run", [5, 6, 7], 6, true);
@@ -34,8 +36,8 @@ class Player extends FlxSprite implements IColorSwappable {
 		setFacingFlip(FlxObject.RIGHT, false, false);
 		setSize(8, 13);
 		facing = FlxObject.RIGHT;
-		setColors();
 		
+		setColors();		
 		adjustBox();
 		
 		fsm = new FlxFSM<Player>(this);
@@ -68,7 +70,6 @@ class Player extends FlxSprite implements IColorSwappable {
 	public function startWarpTweens():Void {
 		FlxTween.tween(this, {y: y + height * scale.y}, Reg.warpTime);
 		FlxTween.tween(scale, {y: 0}, Reg.warpTime / 2, {onComplete: halfTween});
-		FlxTween.tween(scale, {y: -scale.y}, Reg.warpTime);
 	}
 	
 	private function adjustBox():Void {
@@ -80,7 +81,7 @@ class Player extends FlxSprite implements IColorSwappable {
 	
 	private function halfTween(tween:FlxTween):Void {
 		setColors();
-		FlxTween.tween(scale, {y: Reg.isWarped ? -1 : 1}, Reg.warpTime / 2, {onComplete: fullTween});
+		FlxTween.tween(scale, {y: Reg.warpMultiplier}, Reg.warpTime / 2, {onComplete: fullTween});
 	}
 	
 	private function fullTween(tween:FlxTween):Void {
@@ -89,6 +90,16 @@ class Player extends FlxSprite implements IColorSwappable {
 	
 	public function setColors() {
 		color = Reg.isWarped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
+	}
+	
+	public function getFootingPos():Array<FlxPoint> {
+		var footX = x + offset.x;
+		var footY = y + offset.y + (Reg.isWarped ? -1 : height + 1);
+		
+		return [
+			FlxPoint.weak(footX, footY),
+			FlxPoint.weak(footX + width - 1, footY)
+		];
 	}
 	
 	function get_isWarping():Bool {
@@ -143,6 +154,7 @@ class Jumping extends FlxFSMState<Player> {
 	
 	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void {
 		owner.playAnim(owner.velocity.y > 0 ? "fall" : (owner.velocity.y < 0 ? "jump" : owner.animation.name));
+		//Reg.warpStatus = WarpStatus.NO_WARP;
 	}
 	
 	override public function update(elapsed:Float, owner:Player, fsm:FlxFSM<Player>):Void {
@@ -174,6 +186,7 @@ class Warping extends FlxFSMState<Player> {
 	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void {
 		localWarping = true;
 		halfWarp = false;
+		//Reg.warpStatus = WarpStatus.NO_WARP;
 		Reg.isWarped = !Reg.isWarped;
 		owner.switchWarp();
 		owner.animation.pause();

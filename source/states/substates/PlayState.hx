@@ -9,6 +9,7 @@ import flixel.FlxSubState;
 import flixel.addons.editors.ogmo.FlxOgmoLoader;
 import flixel.tile.FlxTilemap;
 
+import Reg.WarpStatus;
 import entities.Player;
 import interfaces.IColorSwappable;
 import managers.ColorPaletteManager;
@@ -45,6 +46,7 @@ class PlayState extends FlxSubState {
 		super.update(elapsed);
 		
 		collidePlayerWithTerrain();
+		trace(Reg.warpStatus);
 		collidePlayerWithBoundaries();
 		paletteSwapCheck();
 	}
@@ -79,13 +81,46 @@ class PlayState extends FlxSubState {
 	}
 	
 	private function collidePlayerWithTerrain() {
-		if(!player.isWarping) {
+		if (!player.isWarping) {
 			if (Reg.isWarped) {
 				FlxG.collide(tilemapBgWhite, player);
 				FlxG.collide(tilemapObjRed, player);
 			} else {
 				FlxG.collide(tilemapBgRed, player);
 				FlxG.collide(tilemapObjWhite, player);
+			}
+			
+			//	I THINK THIS IS THE POOPIEST CODE I'VE EVER POOPED
+			if (Conditions.grounded(player)) {
+				var feet = player.getFootingPos();
+				var colLeft:Bool = false;
+				var colRight:Bool = false;
+				trace((player.y + 16) + " " + feet[1].y);
+				
+				if (Reg.isWarped) {
+					colLeft = tilemapBgWhite.getTileCollisions(tilemapBgWhite.getTile(Std.int(feet[0].x), Std.int(feet[0].y))) == FlxObject.ANY ||
+						tilemapObjRed.getTileCollisions(tilemapObjRed.getTile(Std.int(feet[0].x), Std.int(feet[0].y))) == FlxObject.ANY;
+					
+					colRight = tilemapBgWhite.getTileCollisions(tilemapBgWhite.getTile(Std.int(feet[1].x), Std.int(feet[1].y))) == FlxObject.ANY ||
+						tilemapObjRed.getTileCollisions(tilemapObjRed.getTile(Std.int(feet[1].x), Std.int(feet[1].y))) == FlxObject.ANY;
+				} else {
+					colLeft = tilemapBgRed.getTileCollisions(tilemapBgRed.getTile(Std.int(feet[0].x), Std.int(feet[0].y))) == FlxObject.ANY ||
+						tilemapObjWhite.getTileCollisions(tilemapObjWhite.getTile(Std.int(feet[0].x), Std.int(feet[0].y))) == FlxObject.ANY;
+						
+					colRight = tilemapBgRed.getTileCollisions(tilemapBgRed.getTile(Std.int(feet[1].x), Std.int(feet[1].y))) == FlxObject.ANY ||
+						tilemapObjWhite.getTileCollisions(tilemapObjWhite.getTile(Std.int(feet[1].x), Std.int(feet[1].y))) == FlxObject.ANY;
+				}
+				
+				if (colLeft)
+					if (colRight)
+						Reg.warpStatus = WarpStatus.WARP_STATIC;
+					else
+						Reg.warpStatus = WarpStatus.WARP_LEFT;
+				else
+					if (colRight)
+						Reg.warpStatus = WarpStatus.WARP_RIGHT;
+					else
+						Reg.warpStatus = WarpStatus.NO_WARP;
 			}
 		}
 	}
