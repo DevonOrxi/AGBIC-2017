@@ -1,6 +1,7 @@
 package utils;
 
 import flixel.FlxObject;
+import flixel.math.FlxPoint;
 import flixel.tile.FlxTilemap;
 import interfaces.IColorSwappable;
 import managers.ColorPaletteManager;
@@ -34,6 +35,21 @@ class GeoTilemap extends FlxTilemap implements IColorSwappable
 		}
 		
 		setColors();
+	}
+	
+	public function getTileCollisionByCoords(Coord:FlxPoint):Int
+	{
+		var localX = Coord.x - x;
+		var localY = Coord.y - y;
+		Coord.putWeak();
+		
+		if ((localX < 0) || (localY < 0) || (localX >= width) || (localY >= height))
+			return -1;
+		
+		var index = Std.int(localY / _scaledTileHeight) * widthInTiles + Std.int(localX / _scaledTileWidth);
+		var type = _data[index];
+		var collision = _tileObjects[type].allowCollisions;
+		return collision;
 	}
 	
 	function get_isTopColored():Bool 

@@ -20,11 +20,19 @@ class Player extends FlxSprite implements IColorSwappable {
 	
 	private var fsm:FlxFSM<Player>;
 	public var isWarping(get, null):Bool = false;
+	
+	public var leftFoot:FlxSprite;
+	public var rightFoot:FlxSprite;
 
 	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset)  {
 		super(X, Y, SimpleGraphic);
 		
 		acceleration.y = Reg.playerGravity;
+		
+		leftFoot = new FlxSprite();
+		rightFoot = new FlxSprite();
+		leftFoot.makeGraphic(1, 1, 0xFF0000FF);
+		rightFoot.makeGraphic(1, 1, 0xFF0000FF);
 		
 		loadGraphic(AssetPaths.charRedPart__png, true, Reg.tileWidth, Reg.tileHeight);
 		animation.add("idle", [0, 1, 2, 3], 6, true);
@@ -50,8 +58,11 @@ class Player extends FlxSprite implements IColorSwappable {
 	}
 	
 	override public function update(elapsed:Float):Void {
-		fsm.update(elapsed);		
-		adjustBox();		
+		fsm.update(elapsed);
+		adjustBox();
+		var feet = getFootingPos();
+		leftFoot.setPosition(feet[0].x, feet[0].y);
+		rightFoot.setPosition(feet[1].x, feet[1].y);
 		super.update(elapsed);
 	}
 	
@@ -93,8 +104,8 @@ class Player extends FlxSprite implements IColorSwappable {
 	}
 	
 	public function getFootingPos():Array<FlxPoint> {
-		var footX = x + offset.x;
-		var footY = y + offset.y + (Reg.isWarped ? -1 : height + 1);
+		var footX = x;
+		var footY = y + (Reg.isWarped ? -1 : height);
 		
 		return [
 			FlxPoint.weak(footX, footY),

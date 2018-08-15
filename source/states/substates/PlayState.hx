@@ -46,7 +46,6 @@ class PlayState extends FlxSubState {
 		super.update(elapsed);
 		
 		collidePlayerWithTerrain();
-		trace(Reg.warpStatus);
 		collidePlayerWithBoundaries();
 		paletteSwapCheck();
 	}
@@ -62,6 +61,8 @@ class PlayState extends FlxSubState {
 		add(tilemapObjRed);
 		add(boundaries);
 		add(player);
+		add(player.rightFoot);
+		add(player.leftFoot);
 	}
 	
 	private function setColorSwappableArray() {
@@ -95,20 +96,14 @@ class PlayState extends FlxSubState {
 				var feet = player.getFootingPos();
 				var colLeft:Bool = false;
 				var colRight:Bool = false;
-				trace((player.y + 16) + " " + feet[1].y);
+				
 				
 				if (Reg.isWarped) {
-					colLeft = tilemapBgWhite.getTileCollisions(tilemapBgWhite.getTile(Std.int(feet[0].x), Std.int(feet[0].y))) == FlxObject.ANY ||
-						tilemapObjRed.getTileCollisions(tilemapObjRed.getTile(Std.int(feet[0].x), Std.int(feet[0].y))) == FlxObject.ANY;
-					
-					colRight = tilemapBgWhite.getTileCollisions(tilemapBgWhite.getTile(Std.int(feet[1].x), Std.int(feet[1].y))) == FlxObject.ANY ||
-						tilemapObjRed.getTileCollisions(tilemapObjRed.getTile(Std.int(feet[1].x), Std.int(feet[1].y))) == FlxObject.ANY;
+					colLeft = tilemapBgWhite.getTileCollisionByCoords(feet[0]) == FlxObject.ANY || tilemapObjRed.getTileCollisionByCoords(feet[0]) == FlxObject.ANY;					
+					colRight = tilemapBgWhite.getTileCollisionByCoords(feet[1]) == FlxObject.ANY || tilemapObjRed.getTileCollisionByCoords(feet[1]) == FlxObject.ANY;
 				} else {
-					colLeft = tilemapBgRed.getTileCollisions(tilemapBgRed.getTile(Std.int(feet[0].x), Std.int(feet[0].y))) == FlxObject.ANY ||
-						tilemapObjWhite.getTileCollisions(tilemapObjWhite.getTile(Std.int(feet[0].x), Std.int(feet[0].y))) == FlxObject.ANY;
-						
-					colRight = tilemapBgRed.getTileCollisions(tilemapBgRed.getTile(Std.int(feet[1].x), Std.int(feet[1].y))) == FlxObject.ANY ||
-						tilemapObjWhite.getTileCollisions(tilemapObjWhite.getTile(Std.int(feet[1].x), Std.int(feet[1].y))) == FlxObject.ANY;
+					colLeft = tilemapBgRed.getTileCollisionByCoords(feet[0]) == FlxObject.ANY || tilemapObjWhite.getTileCollisionByCoords(feet[0]) == FlxObject.ANY;
+					colRight = tilemapBgRed.getTileCollisionByCoords(feet[1]) == FlxObject.ANY || tilemapObjWhite.getTileCollisionByCoords(feet[1]) == FlxObject.ANY;
 				}
 				
 				if (colLeft)
@@ -121,6 +116,8 @@ class PlayState extends FlxSubState {
 						Reg.warpStatus = WarpStatus.WARP_RIGHT;
 					else
 						Reg.warpStatus = WarpStatus.NO_WARP;
+						
+				trace(Reg.warpStatus);
 			}
 		}
 	}
