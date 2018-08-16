@@ -94,30 +94,19 @@ class PlayState extends FlxSubState {
 			//	I THINK THIS IS THE POOPIEST CODE I'VE EVER POOPED
 			if (Conditions.grounded(player)) {
 				var feet = player.getFootingPos();
-				var colLeft:Bool = false;
-				var colRight:Bool = false;
+				var result:Int = 0;
 				
+				result = Reg.isWarped ?
+					tilemapBgWhite.isFeetPosCollidableByCoords(feet) | tilemapObjRed.isFeetPosCollidableByCoords(feet) :
+					tilemapBgRed.isFeetPosCollidableByCoords(feet) | tilemapObjWhite.isFeetPosCollidableByCoords(feet);
 				
-				if (Reg.isWarped) {
-					colLeft = tilemapBgWhite.getTileCollisionByCoords(feet[0]) == FlxObject.ANY || tilemapObjRed.getTileCollisionByCoords(feet[0]) == FlxObject.ANY;					
-					colRight = tilemapBgWhite.getTileCollisionByCoords(feet[1]) == FlxObject.ANY || tilemapObjRed.getTileCollisionByCoords(feet[1]) == FlxObject.ANY;
-				} else {
-					colLeft = tilemapBgRed.getTileCollisionByCoords(feet[0]) == FlxObject.ANY || tilemapObjWhite.getTileCollisionByCoords(feet[0]) == FlxObject.ANY;
-					colRight = tilemapBgRed.getTileCollisionByCoords(feet[1]) == FlxObject.ANY || tilemapObjWhite.getTileCollisionByCoords(feet[1]) == FlxObject.ANY;
-				}
-				
-				if (colLeft)
-					if (colRight)
-						Reg.warpStatus = WarpStatus.WARP_STATIC;
-					else
-						Reg.warpStatus = WarpStatus.WARP_LEFT;
-				else
-					if (colRight)
-						Reg.warpStatus = WarpStatus.WARP_RIGHT;
-					else
-						Reg.warpStatus = WarpStatus.NO_WARP;
-						
-				trace(Reg.warpStatus);
+				Reg.warpStatus = switch (result) {
+					case 0: WarpStatus.NO_WARP;
+					case 1: WarpStatus.WARP_LEFT;
+					case 2: WarpStatus.WARP_RIGHT;
+					default: WarpStatus.WARP_STATIC;
+				};
+				trace (Reg.warpStatus);
 			}
 		}
 	}

@@ -60,10 +60,12 @@ class Player extends FlxSprite implements IColorSwappable {
 	override public function update(elapsed:Float):Void {
 		fsm.update(elapsed);
 		adjustBox();
+		
+		super.update(elapsed);
+		
 		var feet = getFootingPos();
 		leftFoot.setPosition(feet[0].x, feet[0].y);
 		rightFoot.setPosition(feet[1].x, feet[1].y);
-		super.update(elapsed);
 	}
 	
 	public function switchWarp():Void {
@@ -129,7 +131,7 @@ class Conditions {
 	}
 	
 	public static function warping(owner:Player):Bool {
-		return (grounded(owner) && (FlxG.keys.justPressed.UP && Reg.isWarped) || (FlxG.keys.justPressed.DOWN && !Reg.isWarped));
+		return (grounded(owner) /*&& Reg.warpStatus == WarpStatus.WARP_STATIC*/ && (FlxG.keys.justPressed.UP && Reg.isWarped) || (FlxG.keys.justPressed.DOWN && !Reg.isWarped));
 	}
 	
 	public static function warpFinished(owner:Player):Bool {
@@ -165,7 +167,6 @@ class Jumping extends FlxFSMState<Player> {
 	
 	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void {
 		owner.playAnim(owner.velocity.y > 0 ? "fall" : (owner.velocity.y < 0 ? "jump" : owner.animation.name));
-		//Reg.warpStatus = WarpStatus.NO_WARP;
 	}
 	
 	override public function update(elapsed:Float, owner:Player, fsm:FlxFSM<Player>):Void {
@@ -197,7 +198,6 @@ class Warping extends FlxFSMState<Player> {
 	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void {
 		localWarping = true;
 		halfWarp = false;
-		//Reg.warpStatus = WarpStatus.NO_WARP;
 		Reg.isWarped = !Reg.isWarped;
 		owner.switchWarp();
 		owner.animation.pause();
