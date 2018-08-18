@@ -9,6 +9,7 @@ import flixel.FlxSubState;
 import flixel.addons.editors.ogmo.FlxOgmoLoader;
 import flixel.tile.FlxTilemap;
 
+import Reg.WarpStatus;
 import entities.Player;
 import interfaces.IColorSwappable;
 import managers.ColorPaletteManager;
@@ -79,13 +80,30 @@ class PlayState extends FlxSubState {
 	}
 	
 	private function collidePlayerWithTerrain() {
-		if(!player.isWarping) {
+		if (!player.isWarping) {
 			if (Reg.isWarped) {
 				FlxG.collide(tilemapBgWhite, player);
 				FlxG.collide(tilemapObjRed, player);
 			} else {
 				FlxG.collide(tilemapBgRed, player);
 				FlxG.collide(tilemapObjWhite, player);
+			}
+			
+			//	I THINK THIS IS THE POOPIEST CODE I'VE EVER POOPED
+			if (Conditions.grounded(player)) {
+				var feet = player.getFootingPos();
+				var result:Int = 0;
+				
+				result = Reg.isWarped ?
+					tilemapBgWhite.isFeetPosCollidableByCoords(feet) | tilemapObjRed.isFeetPosCollidableByCoords(feet) :
+					tilemapBgRed.isFeetPosCollidableByCoords(feet) | tilemapObjWhite.isFeetPosCollidableByCoords(feet);
+				
+				Reg.warpStatus = switch (result) {
+					case 0: WarpStatus.NO_WARP;
+					case 1: WarpStatus.WARP_LEFT;
+					case 2: WarpStatus.WARP_RIGHT;
+					default: WarpStatus.WARP_STATIC;
+				};
 			}
 		}
 	}

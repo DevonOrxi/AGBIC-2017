@@ -5,9 +5,11 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.addons.util.FlxFSM;
 import flixel.addons.util.FlxFSM.FlxFSMState;
+import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.tweens.FlxTween;
 import interfaces.IColorSwappable;
+import Reg.WarpStatus;
 
 /**
  * ...
@@ -18,6 +20,9 @@ class Player extends FlxSprite implements IColorSwappable {
 	
 	private var fsm:FlxFSM<Player>;
 	public var isWarping(get, null):Bool = false;
+	
+	public var leftFoot:FlxSprite;
+	public var rightFoot:FlxSprite;
 
 	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset)  {
 		super(X, Y, SimpleGraphic);
@@ -34,8 +39,8 @@ class Player extends FlxSprite implements IColorSwappable {
 		setFacingFlip(FlxObject.RIGHT, false, false);
 		setSize(8, 13);
 		facing = FlxObject.RIGHT;
-		setColors();
 		
+		setColors();		
 		adjustBox();
 		
 		fsm = new FlxFSM<Player>(this);
@@ -48,8 +53,9 @@ class Player extends FlxSprite implements IColorSwappable {
 	}
 	
 	override public function update(elapsed:Float):Void {
-		fsm.update(elapsed);		
-		adjustBox();		
+		fsm.update(elapsed);
+		adjustBox();
+		
 		super.update(elapsed);
 	}
 	
@@ -68,7 +74,6 @@ class Player extends FlxSprite implements IColorSwappable {
 	public function startWarpTweens():Void {
 		FlxTween.tween(this, {y: y + height * scale.y}, Reg.warpTime);
 		FlxTween.tween(scale, {y: 0}, Reg.warpTime / 2, {onComplete: halfTween});
-		FlxTween.tween(scale, {y: -scale.y}, Reg.warpTime);
 	}
 	
 	private function adjustBox():Void {
@@ -80,7 +85,7 @@ class Player extends FlxSprite implements IColorSwappable {
 	
 	private function halfTween(tween:FlxTween):Void {
 		setColors();
-		FlxTween.tween(scale, {y: Reg.isWarped ? -1 : 1}, Reg.warpTime / 2, {onComplete: fullTween});
+		FlxTween.tween(scale, {y: Reg.warpMultiplier}, Reg.warpTime / 2, {onComplete: fullTween});
 	}
 	
 	private function fullTween(tween:FlxTween):Void {
@@ -89,6 +94,16 @@ class Player extends FlxSprite implements IColorSwappable {
 	
 	public function setColors() {
 		color = Reg.isWarped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
+	}
+	
+	public function getFootingPos():Array<FlxPoint> {
+		var footX = x;
+		var footY = y + (Reg.isWarped ? -1 : height);
+		
+		return [
+			FlxPoint.weak(footX, footY),
+			FlxPoint.weak(footX + width - 1, footY)
+		];
 	}
 	
 	function get_isWarping():Bool {
@@ -107,7 +122,13 @@ class Conditions {
 	}
 	
 	public static function warping(owner:Player):Bool {
-		return (grounded(owner) && (FlxG.keys.justPressed.UP && Reg.isWarped) || (FlxG.keys.justPressed.DOWN && !Reg.isWarped));
+		return (
+			grounded(owner) &&
+			Reg.warpStatus == WarpStatus.WARP_STATIC &&	(
+				(FlxG.keys.justPressed.UP && Reg.isWarped) ||
+				(FlxG.keys.justPressed.DOWN && !Reg.isWarped)
+			)
+		);
 	}
 	
 	public static function warpFinished(owner:Player):Bool {
