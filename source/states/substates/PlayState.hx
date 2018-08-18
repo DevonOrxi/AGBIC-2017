@@ -61,8 +61,6 @@ class PlayState extends FlxSubState {
 		add(tilemapObjRed);
 		add(boundaries);
 		add(player);
-		add(player.rightFoot);
-		add(player.leftFoot);
 	}
 	
 	private function setColorSwappableArray() {
@@ -106,7 +104,6 @@ class PlayState extends FlxSubState {
 					case 2: WarpStatus.WARP_RIGHT;
 					default: WarpStatus.WARP_STATIC;
 				};
-				trace (Reg.warpStatus);
 			}
 		}
 	}

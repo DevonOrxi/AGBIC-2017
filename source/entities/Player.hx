@@ -29,11 +29,6 @@ class Player extends FlxSprite implements IColorSwappable {
 		
 		acceleration.y = Reg.playerGravity;
 		
-		leftFoot = new FlxSprite();
-		rightFoot = new FlxSprite();
-		leftFoot.makeGraphic(1, 1, 0xFF0000FF);
-		rightFoot.makeGraphic(1, 1, 0xFF0000FF);
-		
 		loadGraphic(AssetPaths.charRedPart__png, true, Reg.tileWidth, Reg.tileHeight);
 		animation.add("idle", [0, 1, 2, 3], 6, true);
 		animation.add("hurt", [4], 6, false);
@@ -62,10 +57,6 @@ class Player extends FlxSprite implements IColorSwappable {
 		adjustBox();
 		
 		super.update(elapsed);
-		
-		var feet = getFootingPos();
-		leftFoot.setPosition(feet[0].x, feet[0].y);
-		rightFoot.setPosition(feet[1].x, feet[1].y);
 	}
 	
 	public function switchWarp():Void {
@@ -131,7 +122,13 @@ class Conditions {
 	}
 	
 	public static function warping(owner:Player):Bool {
-		return (grounded(owner) /*&& Reg.warpStatus == WarpStatus.WARP_STATIC*/ && (FlxG.keys.justPressed.UP && Reg.isWarped) || (FlxG.keys.justPressed.DOWN && !Reg.isWarped));
+		return (
+			grounded(owner) &&
+			Reg.warpStatus == WarpStatus.WARP_STATIC &&	(
+				(FlxG.keys.justPressed.UP && Reg.isWarped) ||
+				(FlxG.keys.justPressed.DOWN && !Reg.isWarped)
+			)
+		);
 	}
 	
 	public static function warpFinished(owner:Player):Bool {
