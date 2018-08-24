@@ -82,7 +82,7 @@ class PlayState extends FlxSubState {
 	
 	private function collidePlayerWithTerrain() {
 		if (!player.isWarping) {
-			if (Reg.isWarped) {
+			if (player.warped) {
 				FlxG.collide(tilemapBgWhite, player);
 				FlxG.collide(tilemapObjRed, player);
 			} else {
@@ -91,11 +91,11 @@ class PlayState extends FlxSubState {
 			}
 			
 			//	I THINK THIS IS THE POOPIEST CODE I'VE EVER POOPED
-			if (Conditions.grounded(player)) {
+			if (PlayerConditions.grounded(player)) {
 				var feet = player.getFootingPos();
 				var result:Int = 0;
 				
-				result = Reg.isWarped ?
+				result = player.warped ?
 					tilemapBgWhite.isFeetPosCollidableByCoords(feet) | tilemapObjRed.isFeetPosCollidableByCoords(feet) :
 					tilemapBgRed.isFeetPosCollidableByCoords(feet) | tilemapObjWhite.isFeetPosCollidableByCoords(feet);
 				

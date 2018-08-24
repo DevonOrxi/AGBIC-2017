@@ -27,7 +27,7 @@ enum WarpStatus {
 
 class Reg {
 	inline static public var playerVelX:Float = 80;
-	inline static public var patrollerVelX:Float = 80;
+	inline static public var patrollerVelX:Float = 40;
 	inline static public var warpTime:Float = 0.25;
 	inline static public var boxOffsetX:Float = 3;
 	inline static public var boxOffsetY:Float = 3;
@@ -40,16 +40,11 @@ class Reg {
 	static public var warpStatus:WarpStatus = NO_WARP;
 	static public var colorPalette:ColorPaletteManager = ColorPaletteManager.instance;
 	static public var levelManager:LevelManager = LevelManager.instance;	
-	static public var configData(get, null):Dynamic;	
-	static public var warpMultiplier(get, null):Int;
+	static public var configData(get, null):Dynamic;
 	
 	static public function initExternalData() {
 		var jsonString:String = Assets.getText(AssetPaths.config__json);
 		Reg.configData = Json.parse(jsonString);
-	}
-	
-	static function get_warpMultiplier():Int {
-		return Reg.isWarped ? -1 : 1;
 	}
 	
 	static function get_configData():Dynamic {
