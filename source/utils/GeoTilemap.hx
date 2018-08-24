@@ -14,22 +14,18 @@ class GeoTilemap extends FlxTilemap implements IColorSwappable
 {
 	public var isTopColored(get, null):Bool = true;
 	
-	public function setColors()
-	{
+	public function setColors() {
 		color = isTopColored ? ColorPaletteManager.instance.colorFront : ColorPaletteManager.instance.colorBack;
 	}
 	
-	public function init(topColored:Bool, isBackgroundTilemap: Bool)
-	{
+	public function init(topColored:Bool, isBackgroundTilemap: Bool) {
 		isTopColored = topColored;
 		
-		if (isBackgroundTilemap)
-		{
+		//	WHY DOES THIS CODE EVEN EXIST?
+		if (isBackgroundTilemap) {
 			setTileProperties(0, FlxObject.NONE);
 			setTileProperties(1, FlxObject.ANY);
-		}
-		else
-		{
+		} else {
 			setTileProperties(0, FlxObject.NONE);
 			setTileProperties(1, FlxObject.ANY);
 		}
@@ -37,8 +33,7 @@ class GeoTilemap extends FlxTilemap implements IColorSwappable
 		setColors();
 	}
 	
-	public function isTileCollisionAnyByCoords(Coord:FlxPoint):Bool
-	{
+	public function isTileCollisionAnyByCoords(Coord:FlxPoint):Bool {
 		var localX = Coord.x - x;
 		var localY = Coord.y - y;
 		Coord.putWeak();
@@ -52,8 +47,7 @@ class GeoTilemap extends FlxTilemap implements IColorSwappable
 		return collision == FlxObject.ANY;
 	}
 	
-	public function isFeetPosCollidableByCoords(feet:Array<FlxPoint>):Int
-	{
+	public function isFeetPosCollidableByCoords(feet:Array<FlxPoint>):Int {
 		var result:Int = 0;
 		
 		for (i in 0...feet.length) {
@@ -67,15 +61,11 @@ class GeoTilemap extends FlxTilemap implements IColorSwappable
 			
 			var index = Std.int(localY / _scaledTileHeight) * widthInTiles + Std.int(localX / _scaledTileWidth);
 			var type = _data[index];
-			if (_tileObjects[type].allowCollisions == FlxObject.ANY) {
+			if (_tileObjects[type].allowCollisions == FlxObject.ANY)
 				result = result | (1 << i);
-			}
 		}
 		return result;
 	}
 	
-	function get_isTopColored():Bool 
-	{
-		return isTopColored;
-	}
+	function get_isTopColored():Bool { return isTopColored; }
 }

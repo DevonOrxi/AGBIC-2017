@@ -1,5 +1,6 @@
 package states.substates;
 
+import entities.Patroller;
 import haxe.Json;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -8,7 +9,6 @@ import flixel.FlxObject;
 import flixel.FlxSubState;
 import flixel.addons.editors.ogmo.FlxOgmoLoader;
 import flixel.tile.FlxTilemap;
-
 import Reg.WarpStatus;
 import entities.Player;
 import interfaces.IColorSwappable;
@@ -61,6 +61,7 @@ class PlayState extends FlxSubState {
 		add(tilemapObjRed);
 		add(boundaries);
 		add(player);
+		add(new Patroller());
 	}
 	
 	private function setColorSwappableArray() {
