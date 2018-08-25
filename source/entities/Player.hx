@@ -16,7 +16,7 @@ import Reg.WarpStatus;
  * @author A. Cid
  */
  
-class Player extends FlxSprite implements IColorSwappable {
+class Player extends BaseEntity {
 	
 	private var fsm:FlxFSM<Player>;
 	public var isWarping(get, null):Bool = false;	
@@ -99,7 +99,7 @@ class Player extends FlxSprite implements IColorSwappable {
 		switchWarping();
 	}
 	
-	public function setColors() {
+	override public function setColors() {
 		color = warped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
 	}
 	

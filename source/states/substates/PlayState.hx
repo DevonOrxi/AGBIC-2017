@@ -1,5 +1,6 @@
 package states.substates;
 
+import entities.BaseEntity;
 import entities.Patroller;
 import haxe.Json;
 import flixel.FlxSprite;
@@ -25,7 +26,10 @@ class PlayState extends FlxSubState {
 	private var tilemapObjWhite:GeoTilemap;
 	private var tilemapObjRed:GeoTilemap;
 	private var colorSwappables:Array<IColorSwappable> = [];
+	private var mapCollidables = new FlxTypedGroup<BaseEntity>();
 	private var boundaries = new FlxTypedGroup<FlxSprite>();
+	
+	private var enemy:Patroller;
 
 	override public function create():Void {
 		super.create();
@@ -34,11 +38,13 @@ class PlayState extends FlxSubState {
 		ColorPaletteManager.boot();
 		LevelManager.boot();
 		player = new Player();
+		enemy = new Patroller(32);
 		FlxG.cameras.bgColor = 0xFFFF00FF;
 
 		setTilemaps();
 		createBoundaries();
 		setColorSwappableArray();
+		setMapCollidablesGroup();
 		addToState();
 	}
 
@@ -48,6 +54,10 @@ class PlayState extends FlxSubState {
 		collidePlayerWithTerrain();
 		collidePlayerWithBoundaries();
 		paletteSwapCheck();
+		
+		if (FlxG.collide(boundaries, enemy)) {
+			enemy.collisionHandlerWithMap();
+		}
 	}
 	
 	private function collidePlayerWithBoundaries() {
@@ -61,7 +71,7 @@ class PlayState extends FlxSubState {
 		add(tilemapObjRed);
 		add(boundaries);
 		add(player);
-		add(new Patroller());
+		add(mapCollidables);
 	}
 	
 	private function setColorSwappableArray() {
@@ -70,6 +80,10 @@ class PlayState extends FlxSubState {
 		colorSwappables.push(tilemapObjWhite);
 		colorSwappables.push(tilemapObjRed);
 		colorSwappables.push(player);
+	}
+	
+	private function setMapCollidablesGroup() {
+		mapCollidables.add(enemy);
 	}
 	
 	private function paletteSwapCheck() {
