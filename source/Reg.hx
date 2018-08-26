@@ -5,14 +5,6 @@ import managers.LevelManager;
 import openfl.Assets;
 import haxe.Json;
 
-/*
- * 1. Check A and B points for collision
- * 2. If both A and B collide and is grounded, make warpable
- * 2a. If A collides and (A.x + width / 2) % Reg.tileWidth > Reg.tileWidth / 2, make warpable with left auto alignment
- * 2b. If B collides and (B.x - width / 2) % Reg.tileWidth < Reg.tileWidth / 2, make warpable with right auto alignment
- * 2c. If not A nor B collide, make not warpable
- */
-
 /**
  * ...
  * @author A. Cid
@@ -36,7 +28,6 @@ class Reg {
 	
 	static public var playerGravity:Float = 512;
 	static public var playerJumpForce:Float = -128;
-	static public var isWarped:Bool = false;
 	static public var warpStatus:WarpStatus = NO_WARP;
 	static public var colorPalette:ColorPaletteManager = ColorPaletteManager.instance;
 	static public var levelManager:LevelManager = LevelManager.instance;	

@@ -10,11 +10,10 @@ import interfaces.IColorSwappable;
  * @author A. Cid
  */
 class Patroller extends BaseEntity {
-
-	private var warped:Bool = false;
-	private var isWarping:Bool = false;
+	
+	public var isFlipping(get, null):Bool = false;
 	private var goingRight:Bool = false;
-	private var goingRightMultiplier(get, null):Int;
+	
 	
 	public function new(?X:Float=0, ?Y:Float=0, ?isGoingRight:Bool=false, ?isWarped:Bool=false) {
 		super(X, Y);
@@ -25,7 +24,7 @@ class Patroller extends BaseEntity {
 		
 		goingRight = isGoingRight;
 		setProperHorizontalVelocity();
-		scale.x = -goingRightMultiplier;
+		scale.x = -goingRightMultiplier();
 		warped = isWarped;
 		setColors();
 	}
@@ -34,26 +33,31 @@ class Patroller extends BaseEntity {
 		color = warped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
 	}
 	
-	override public function collisionHandlerWithMap() {
-		if (!isWarping) {
-			isWarping = true;
+	override public function handleCollisionWithMap() {
+		if (!isFlipping) {
+			isFlipping = true;
 			goingRight = !goingRight;
-			FlxTween.tween(scale, {x: -goingRightMultiplier}, 0.2, {onComplete: collideFlipFinished});
+			FlxTween.tween(scale, {x: -goingRightMultiplier()}, 0.2, {onComplete: collideFlipFinished});
 			velocity.x = 0;
 		}
 	}
 	
 	private function collideFlipFinished(tween:FlxTween) {
-		isWarping = false;
+		isFlipping = false;
 		setProperHorizontalVelocity();
 	}
 	
 	private function setProperHorizontalVelocity() {
-		velocity.x = Reg.patrollerVelX * goingRightMultiplier;
+		velocity.x = Reg.patrollerVelX * goingRightMultiplier();
 	}
 	
-	function get_goingRightMultiplier():Int {
+	private function goingRightMultiplier():Int {
 		return (goingRight ? 1 : -1);
+	}
+	
+	function get_isFlipping():Bool 
+	{
+		return isFlipping;
 	}
 	
 }

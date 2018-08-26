@@ -21,7 +21,6 @@ class Player extends BaseEntity {
 	private var fsm:FlxFSM<Player>;
 	public var isWarping(get, null):Bool = false;	
 	public var warpMultiplier(get, null):Int;
-	public var warped(get, null):Bool;
 	
 	public var leftFoot:FlxSprite;
 	public var rightFoot:FlxSprite;
@@ -103,26 +102,12 @@ class Player extends BaseEntity {
 		color = warped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
 	}
 	
-	public function getFootingPos():Array<FlxPoint> {
-		var footX = x;
-		var footY = y + (warped ? -1 : height);
-		
-		return [
-			FlxPoint.weak(footX, footY),
-			FlxPoint.weak(footX + width - 1, footY)
-		];
-	}
-	
 	function get_isWarping():Bool {
 		return isWarping;
 	}
 	
 	function get_warpMultiplier():Int {
 		return warped ? -1 : 1;
-	}
-	
-	function get_warped():Bool {
-		return warped;
 	}
 }
 

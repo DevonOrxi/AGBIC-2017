@@ -60,6 +60,7 @@
 -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1</obj_over_white>
   <entities>
-    <player id="0" x="0" y="0" />
+    <player id="1" x="16" y="112" />
+    <patroller id="0" x="128" y="112" warped="False" goingRight="False" />
   </entities>
 </level>
