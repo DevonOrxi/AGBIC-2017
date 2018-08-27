@@ -16,7 +16,7 @@
     <Width>25600</Width>
     <Height>24000</Height>
   </LevelMaximumSize>
-  <Filename>C:\Users\rumpel\Documents\AGBIC-2017\assets\data\level\famicase.oep</Filename>
+  <Filename>D:\Code\HaxeFlixel\Famicase\assets\data\level\famicase.oep</Filename>
   <AngleMode>Radians</AngleMode>
   <CameraEnabled>false</CameraEnabled>
   <CameraSize>
@@ -142,22 +142,7 @@
       <ValueDefinitions />
       <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
     </EntityDefinition>
-    <EntityDefinition Name="goal" Limit="0" ResizableX="false" ResizableY="false" Rotatable="false" RotateIncrement="15">
-      <Size>
-        <Width>64</Width>
-        <Height>64</Height>
-      </Size>
-      <Origin>
-        <X>0</X>
-        <Y>0</Y>
-      </Origin>
-      <ImageDefinition DrawMode="Image" ImagePath="..\..\images\goal\goal.png" Tiled="false">
-        <RectColor A="255" R="255" G="0" B="0" />
-      </ImageDefinition>
-      <ValueDefinitions />
-      <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
-    </EntityDefinition>
-    <EntityDefinition Name="enemy" Limit="-1" ResizableX="false" ResizableY="false" Rotatable="false" RotateIncrement="15">
+    <EntityDefinition Name="goal" Limit="1" ResizableX="false" ResizableY="false" Rotatable="false" RotateIncrement="15">
       <Size>
         <Width>16</Width>
         <Height>16</Height>
@@ -166,13 +151,29 @@
         <X>0</X>
         <Y>0</Y>
       </Origin>
-      <ImageDefinition DrawMode="Image" ImagePath="..\..\images\enemy\enemy.png" Tiled="false">
-        <RectColor A="255" R="255" G="0" B="0" />
+      <ImageDefinition DrawMode="Rectangle" ImagePath="..\..\images\goal\goal.png" Tiled="false">
+        <RectColor A="255" R="0" G="255" B="0" />
       </ImageDefinition>
       <ValueDefinitions>
-        <ValueDefinition xsi:type="BoolValueDefinition" Name="is_movig" Default="true" />
-        <ValueDefinition xsi:type="IntValueDefinition" Name="max_left" Default="120" Min="0" Max="200" ShowSlider="false" />
-        <ValueDefinition xsi:type="IntValueDefinition" Name="max_right " Default="120" Min="0" Max="200" ShowSlider="false" />
+        <ValueDefinition xsi:type="BoolValueDefinition" Name="warped" Default="false" />
+      </ValueDefinitions>
+      <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
+    </EntityDefinition>
+    <EntityDefinition Name="patroller" Limit="-1" ResizableX="false" ResizableY="false" Rotatable="false" RotateIncrement="15">
+      <Size>
+        <Width>16</Width>
+        <Height>16</Height>
+      </Size>
+      <Origin>
+        <X>0</X>
+        <Y>0</Y>
+      </Origin>
+      <ImageDefinition DrawMode="Rectangle" ImagePath="" Tiled="false">
+        <RectColor A="255" R="255" G="255" B="0" />
+      </ImageDefinition>
+      <ValueDefinitions>
+        <ValueDefinition xsi:type="BoolValueDefinition" Name="warped" Default="false" />
+        <ValueDefinition xsi:type="BoolValueDefinition" Name="goingRight" Default="false" />
       </ValueDefinitions>
       <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
     </EntityDefinition>

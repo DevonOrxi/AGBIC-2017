@@ -16,7 +16,7 @@ import Reg.WarpStatus;
  * @author A. Cid
  */
  
-class Player extends FlxSprite implements IColorSwappable {
+class Player extends BaseEntity {
 	
 	private var fsm:FlxFSM<Player>;
 	public var isWarping(get, null):Bool = false;
@@ -24,8 +24,8 @@ class Player extends FlxSprite implements IColorSwappable {
 	public var leftFoot:FlxSprite;
 	public var rightFoot:FlxSprite;
 
-	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset)  {
-		super(X, Y, SimpleGraphic);
+	public function new(?X:Float=0, ?Y:Float=0, ?startWarped:Bool=false)  {
+		super(X, Y);
 		
 		acceleration.y = Reg.playerGravity;
 		
@@ -39,16 +39,17 @@ class Player extends FlxSprite implements IColorSwappable {
 		setFacingFlip(FlxObject.RIGHT, false, false);
 		setSize(8, 13);
 		facing = FlxObject.RIGHT;
+		warped = startWarped;
 		
 		setColors();		
 		adjustBox();
 		
 		fsm = new FlxFSM<Player>(this);
 		fsm.transitions
-			.add(Standing, Jumping, Conditions.airborne)
-			.add(Jumping, Standing, Conditions.grounded)
-			.add(Standing, Warping, Conditions.warping)
-			.add(Warping, Standing, Conditions.warpFinished)
+			.add(Standing, Jumping, PlayerConditions.airborne)
+			.add(Jumping, Standing, PlayerConditions.grounded)
+			.add(Standing, Warping, PlayerConditions.warping)
+			.add(Warping, Standing, PlayerConditions.warpFinished)
 			.start(Standing);
 	}
 	
@@ -59,8 +60,12 @@ class Player extends FlxSprite implements IColorSwappable {
 		super.update(elapsed);
 	}
 	
-	public function switchWarp():Void {
+	public function switchWarping():Void {
 		isWarping = !isWarping;
+	}
+	
+	public function switchWarped():Void {
+		warped = !warped;
 	}
 	
 	public function playAnim(name:String):Void {
@@ -78,32 +83,22 @@ class Player extends FlxSprite implements IColorSwappable {
 	
 	private function adjustBox():Void {
 		var hor:Float = facing == FlxObject.RIGHT ? Reg.boxOffsetX : frameWidth - (Reg.boxOffsetX + width);
-		var ver:Float = !Reg.isWarped ? Reg.boxOffsetY : frameHeight - (Reg.boxOffsetY + height);
+		var ver:Float = !warped ? Reg.boxOffsetY : frameHeight - (Reg.boxOffsetY + height);
 		
 		offset.set(hor, ver);
 	}
 	
 	private function halfTween(tween:FlxTween):Void {
 		setColors();
-		FlxTween.tween(scale, {y: Reg.warpMultiplier}, Reg.warpTime / 2, {onComplete: fullTween});
+		FlxTween.tween(scale, {y: warpMultiplier}, Reg.warpTime / 2, {onComplete: fullTween});
 	}
 	
 	private function fullTween(tween:FlxTween):Void {
-		switchWarp();
+		switchWarping();
 	}
 	
-	public function setColors() {
-		color = Reg.isWarped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
-	}
-	
-	public function getFootingPos():Array<FlxPoint> {
-		var footX = x;
-		var footY = y + (Reg.isWarped ? -1 : height);
-		
-		return [
-			FlxPoint.weak(footX, footY),
-			FlxPoint.weak(footX + width - 1, footY)
-		];
+	override public function setColors() {
+		color = warped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
 	}
 	
 	function get_isWarping():Bool {
@@ -111,22 +106,22 @@ class Player extends FlxSprite implements IColorSwappable {
 	}
 }
 
-class Conditions {
+class PlayerConditions {
 	
 	public static function airborne(owner:Player):Bool {
 		return (!grounded(owner));
 	}
 	
 	public static function grounded(owner:Player):Bool {
-		return (owner.isTouching(Reg.isWarped ? FlxObject.UP : FlxObject.DOWN));
+		return (owner.isTouching(owner.warped ? FlxObject.UP : FlxObject.DOWN));
 	}
 	
 	public static function warping(owner:Player):Bool {
 		return (
 			grounded(owner) &&
 			Reg.warpStatus == WarpStatus.WARP_STATIC &&	(
-				(FlxG.keys.justPressed.UP && Reg.isWarped) ||
-				(FlxG.keys.justPressed.DOWN && !Reg.isWarped)
+				(FlxG.keys.justPressed.UP && owner.warped) ||
+				(FlxG.keys.justPressed.DOWN && !owner.warped)
 			)
 		);
 	}
@@ -151,7 +146,7 @@ class Standing extends FlxFSMState<Player> {
 		
 		checkRun(owner);
 		
-		if ((FlxG.keys.justPressed.UP && !Reg.isWarped) || (FlxG.keys.justPressed.DOWN && Reg.isWarped))
+		if ((FlxG.keys.justPressed.UP && !owner.warped) || (FlxG.keys.justPressed.DOWN && owner.warped))
 			owner.velocity.y = Reg.playerJumpForce;
 	}
 	
@@ -177,7 +172,7 @@ class Jumping extends FlxFSMState<Player> {
 		var anim:String = owner.animation.name;
 		
 		if (owner.velocity.y != 0) {
-			if (!Reg.isWarped)
+			if (!owner.warped)
 				anim = owner.velocity.y < 0 ? "jump" : "fall";
 			else
 				anim = owner.velocity.y < 0 ? "fall" : "jump";
@@ -195,8 +190,8 @@ class Warping extends FlxFSMState<Player> {
 	override public function enter(owner:Player, fsm:FlxFSM<Player>):Void {
 		localWarping = true;
 		halfWarp = false;
-		Reg.isWarped = !Reg.isWarped;
-		owner.switchWarp();
+		owner.switchWarped();
+		owner.switchWarping();
 		owner.animation.pause();
 		owner.velocity.set(0, 0);
 		owner.acceleration.y = 0;

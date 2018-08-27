@@ -1,5 +1,8 @@
 package states.substates;
 
+import entities.BaseEntity;
+import entities.Goal;
+import entities.Patroller;
 import haxe.Json;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -8,7 +11,6 @@ import flixel.FlxObject;
 import flixel.FlxSubState;
 import flixel.addons.editors.ogmo.FlxOgmoLoader;
 import flixel.tile.FlxTilemap;
-
 import Reg.WarpStatus;
 import entities.Player;
 import interfaces.IColorSwappable;
@@ -20,12 +22,16 @@ import utils.GeoTilemap;
 class PlayState extends FlxSubState {
 	
 	private var player:Player;
+	private var goal:Goal;
 	private var tilemapBgWhite:GeoTilemap;
 	private var tilemapBgRed:GeoTilemap;
 	private var tilemapObjWhite:GeoTilemap;
 	private var tilemapObjRed:GeoTilemap;
 	private var colorSwappables:Array<IColorSwappable> = [];
 	private var boundaries = new FlxTypedGroup<FlxSprite>();
+	private var patrollerGroup = new FlxTypedGroup<Patroller>();
+	
+	private var enemy:Patroller;
 
 	override public function create():Void {
 		super.create();
@@ -39,27 +45,32 @@ class PlayState extends FlxSubState {
 		setTilemaps();
 		createBoundaries();
 		setColorSwappableArray();
-		addToState();
+		addEverythingToState();
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 		
-		collidePlayerWithTerrain();
-		collidePlayerWithBoundaries();
+		collideThings();
 		paletteSwapCheck();
 	}
 	
-	private function collidePlayerWithBoundaries() {
+	private function collideThings() {
+		collidePlayerWithTerrain();
+		collidePatrollersWithTerrain();
+		
 		FlxG.collide(boundaries, player);
+		FlxG.collide(boundaries, patrollerGroup, collidedSinglePatrollerWithBoundary);
 	}
 	
-	private function addToState() {
+	private function addEverythingToState() {
 		add(tilemapBgWhite);
 		add(tilemapBgRed);
 		add(tilemapObjWhite);
 		add(tilemapObjRed);
 		add(boundaries);
+		if (goal != null) { add(goal); }
+		add(patrollerGroup);
 		add(player);
 	}
 	
@@ -79,9 +90,43 @@ class PlayState extends FlxSubState {
 		}
 	}
 	
+	private function collidePatrollersWithTerrain() {
+		for (p in patrollerGroup) {
+			collideSinglePatrollerWithTerrain(p);
+			
+			var shouldFlip = false;
+			
+			if (p.isTouching(FlxObject.LEFT | FlxObject.RIGHT)) {
+				shouldFlip = true;
+			} else {
+				var feet = p.getFootingPos();
+				var regularCol = p.warped ? tilemapBgWhite.isFeetPosCollidableByCoords(feet) : tilemapBgRed.isFeetPosCollidableByCoords(feet);
+				var blockersCol = tilemapObjWhite.isFeetPosCollidableByCoords(feet) | tilemapObjRed.isFeetPosCollidableByCoords(feet);
+				
+				if ((regularCol | blockersCol) != 3)
+					shouldFlip = true;
+			}
+			
+			if (shouldFlip)
+				p.handleCollisionWithMap();
+		}
+	}
+	
+	private function collideSinglePatrollerWithTerrain(p:Patroller) {
+		if (!p.isFlipping) {
+			if (p.warped) {
+				FlxG.collide(tilemapBgWhite, p);
+				FlxG.collide(tilemapObjRed, p);
+			} else {
+				FlxG.collide(tilemapBgRed, p);
+				FlxG.collide(tilemapObjWhite, p);
+			}
+		}
+	}
+	
 	private function collidePlayerWithTerrain() {
 		if (!player.isWarping) {
-			if (Reg.isWarped) {
+			if (player.warped) {
 				FlxG.collide(tilemapBgWhite, player);
 				FlxG.collide(tilemapObjRed, player);
 			} else {
@@ -89,14 +134,8 @@ class PlayState extends FlxSubState {
 				FlxG.collide(tilemapObjWhite, player);
 			}
 			
-			//	I THINK THIS IS THE POOPIEST CODE I'VE EVER POOPED
-			if (Conditions.grounded(player)) {
-				var feet = player.getFootingPos();
-				var result:Int = 0;
-				
-				result = Reg.isWarped ?
-					tilemapBgWhite.isFeetPosCollidableByCoords(feet) | tilemapObjRed.isFeetPosCollidableByCoords(feet) :
-					tilemapBgRed.isFeetPosCollidableByCoords(feet) | tilemapObjWhite.isFeetPosCollidableByCoords(feet);
+			if (PlayerConditions.grounded(player)) {
+				var result = canPlayerWarp();
 				
 				Reg.warpStatus = switch (result) {
 					case 0: WarpStatus.NO_WARP;
@@ -104,8 +143,18 @@ class PlayState extends FlxSubState {
 					case 2: WarpStatus.WARP_RIGHT;
 					default: WarpStatus.WARP_STATIC;
 				};
+				
+				trace(Reg.warpStatus);
 			}
 		}
+	}
+	
+	private function canPlayerWarp():Int {
+		var feet = player.getFootingPos();
+		var regularCol = player.warped ? tilemapBgWhite.isFeetPosCollidableByCoords(feet) : tilemapBgRed.isFeetPosCollidableByCoords(feet);
+		var blockersCol = tilemapObjWhite.isFeetPosCollidableByCoords(feet) | tilemapObjRed.isFeetPosCollidableByCoords(feet);
+		
+		return (regularCol & ~blockersCol);
 	}
 	
 	private function createBoundaries() {
@@ -159,12 +208,43 @@ class PlayState extends FlxSubState {
 	}
 
 	private function placeEntities(entityName:String, entityData:Xml):Void {
-		var X:Int = Std.parseInt(entityData.get("x"));
-		var Y:Int = Std.parseInt(entityData.get("y"));
+		var X = Std.parseInt(entityData.get("x"));
+		var Y = Std.parseInt(entityData.get("y"));
 		
-		if (entityName == "player") {
-			player.x = X;
-			player.y = Y;
+		switch (entityName) {
+			case "player":
+				player.x = X;
+				player.y = Y;
+			case "patroller":
+				var goingRight = Std.string(entityData.get("goingRight")) == "true" ? true : false ;
+				var isWarped = Std.string(entityData.get("warped")) == "true" ? true : false ;
+				var patroller = new Patroller(X, Y, goingRight, isWarped);
+				
+				patrollerGroup.add(patroller);
+				colorSwappables.push(patroller);
+			case "goal":
+				var isWarped = Std.string(entityData.get("warped")) == "true" ? true : false;
+				goal = new Goal(X, Y, isWarped);
+				colorSwappables.push(goal);
 		}
 	}
+	
+	private function collidedSinglePatrollerWithBoundary(boundary:FlxSprite, patroller:Patroller) {
+		patroller.handleCollisionWithMap();
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
