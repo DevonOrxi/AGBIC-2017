@@ -33,10 +33,17 @@ class Reg {
 	static public var levelManager:LevelManager = LevelManager.instance;
 	static public var configData(get, null):Dynamic;
 	
+	static private var initialized:Bool = false;
+	
 	static public function initExternalData() {
-		if (configData == null) {
+		if (!initialized) {
 			var jsonString:String = Assets.getText(AssetPaths.config__json);
 			configData = Json.parse(jsonString);
+			
+			ColorPaletteManager.boot();
+			LevelManager.boot();
+			
+			initialized = true;
 		}
 	}
 	

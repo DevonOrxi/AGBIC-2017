@@ -1,4 +1,7 @@
 package managers;
+import flixel.FlxG;
+import states.EndState;
+import states.PlayState;
 
 /**
  * ...
@@ -7,6 +10,8 @@ package managers;
 class LevelManager {
 	
 	static public var instance(default, null):LevelManager = new LevelManager();
+	
+	public var currentLevel(get, null):String;
 	
 	private var levelIndex:Int = 0;
 	private var value:Array<String> = [];
@@ -31,10 +36,15 @@ class LevelManager {
 	}
 	
 	public function progressOneLevel() {
-		levelIndex = (levelIndex + 1) % value.length;
+		levelIndex++;
+		
+		if (levelIndex < value.length)
+			FlxG.switchState(new PlayState());
+		else
+			FlxG.switchState(new EndState());
 	}
 	
-	public function getCurrentLevelID():String {
+	function get_currentLevel():String {
 		return value[levelIndex];
 	}
 	

@@ -36,8 +36,6 @@ class PlayState extends FlxUIState {
 		super.create();
 		
 		Reg.initExternalData();
-		ColorPaletteManager.boot();
-		LevelManager.boot();
 		player = new Player();
 
 		setTilemaps();
@@ -57,6 +55,10 @@ class PlayState extends FlxUIState {
 		collidePlayerWithTerrain();
 		collidePatrollersWithTerrain();
 		
+		if (FlxG.overlap(patrollerGroup, player))
+			FlxG.switchState(new PlayState());
+		
+		FlxG.collide(patrollerGroup, null, collidedPatrollersEachOther);
 		FlxG.collide(boundaries, player);
 		FlxG.collide(boundaries, patrollerGroup, collidedSinglePatrollerWithBoundary);
 	}
@@ -99,7 +101,6 @@ class PlayState extends FlxUIState {
 			FlxG.overlap(goal, player)) {
 			
 			Reg.levelManager.progressOneLevel();
-			FlxG.switchState(new PlayState());
 		}
 	}
 	
@@ -123,6 +124,11 @@ class PlayState extends FlxUIState {
 			if (shouldFlip)
 				p.handleCollisionWithMap();
 		}
+	}
+	
+	private function collidedPatrollersEachOther(p1:Patroller, p2:Patroller) {
+		if (!p1.isFlipping) { p1.handleCollisionWithMap(); }
+		if (!p2.isFlipping) { p2.handleCollisionWithMap(); }
 	}
 	
 	private function collideSinglePatrollerWithTerrain(p:Patroller) {
@@ -156,8 +162,6 @@ class PlayState extends FlxUIState {
 					case 2: WarpStatus.WARP_RIGHT;
 					default: WarpStatus.WARP_STATIC;
 				};
-				
-				trace(Reg.warpStatus);
 			}
 		}
 	}
@@ -200,12 +204,10 @@ class PlayState extends FlxUIState {
 	}
 	
 	private function setTilemaps() {
-		var isTestMode = Reg.configData.testMode == "true";
-		
 		var loader:GeoOgmoLoader = new GeoOgmoLoader(
-			isTestMode ?
+			Reg.configData.testMode == "true" ?
 			AssetPaths.famicase__oel :
-			"assets/data/level/progression/" + Reg.levelManager.getCurrentLevelID() + ".oel");
+			"assets/data/level/progression/" + Reg.levelManager.currentLevel + ".oel");
 		
 		tilemapBgWhite = loader.loadGeoTilemap(AssetPaths.tiles_bg_white__png, Reg.tileWidth, Reg.tileHeight, "bg_white");
 		tilemapBgRed = loader.loadGeoTilemap(AssetPaths.tiles_bg_white__png, Reg.tileWidth, Reg.tileHeight, "bg_red");
@@ -216,6 +218,9 @@ class PlayState extends FlxUIState {
 		tilemapBgRed.init(false, true);
 		tilemapObjWhite.init(false, false);
 		tilemapObjRed.init(true, false);
+		
+		FlxG.camera.setScrollBounds(0, tilemapBgWhite.width, 0, tilemapBgWhite.height);
+		FlxG.worldBounds.set(-Reg.tileWidth, -Reg.tileHeight, tilemapBgWhite.width + Reg.tileWidth, tilemapBgWhite.height + Reg.tileHeight);
 		
 		loader.loadEntities(placeEntities, "entities");
 	}
@@ -246,18 +251,3 @@ class PlayState extends FlxUIState {
 		patroller.handleCollisionWithMap();
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
