@@ -25,17 +25,19 @@ class Reg {
 	inline static public var boxOffsetY:Float = 3;
 	inline static public var tileWidth:Int = 16;
 	inline static public var tileHeight:Int = 16;
+	inline static public var playerGravity:Float = 512;
+	inline static public var playerJumpForce:Float = -128;
 	
-	static public var playerGravity:Float = 512;
-	static public var playerJumpForce:Float = -128;
 	static public var warpStatus:WarpStatus = NO_WARP;
 	static public var colorPalette:ColorPaletteManager = ColorPaletteManager.instance;
-	static public var levelManager:LevelManager = LevelManager.instance;	
+	static public var levelManager:LevelManager = LevelManager.instance;
 	static public var configData(get, null):Dynamic;
 	
 	static public function initExternalData() {
-		var jsonString:String = Assets.getText(AssetPaths.config__json);
-		Reg.configData = Json.parse(jsonString);
+		if (configData == null) {
+			var jsonString:String = Assets.getText(AssetPaths.config__json);
+			configData = Json.parse(jsonString);
+		}
 	}
 	
 	static function get_configData():Dynamic {
