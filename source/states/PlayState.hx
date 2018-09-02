@@ -1,16 +1,15 @@
-package states.substates;
+package states;
 
 import entities.BaseEntity;
 import entities.Goal;
 import entities.Patroller;
+import flixel.addons.transition.FlxTransitionableState;
+import flixel.addons.ui.FlxUIState;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import haxe.Json;
 import flixel.FlxSprite;
-import flixel.group.FlxGroup;
 import flixel.FlxG;
 import flixel.FlxObject;
-import flixel.FlxSubState;
-import flixel.addons.editors.ogmo.FlxOgmoLoader;
-import flixel.tile.FlxTilemap;
 import Reg.WarpStatus;
 import entities.Player;
 import interfaces.IColorSwappable;
@@ -19,7 +18,7 @@ import managers.LevelManager;
 import utils.GeoOgmoLoader;
 import utils.GeoTilemap;
 
-class PlayState extends FlxSubState {
+class PlayState extends FlxUIState {
 	
 	private var player:Player;
 	private var goal:Goal;
@@ -40,7 +39,6 @@ class PlayState extends FlxSubState {
 		ColorPaletteManager.boot();
 		LevelManager.boot();
 		player = new Player();
-		FlxG.cameras.bgColor = 0xFFFF00FF;
 
 		setTilemaps();
 		createBoundaries();
@@ -50,12 +48,12 @@ class PlayState extends FlxSubState {
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
-		
 		collideThings();
 		paletteSwapCheck();
 	}
 	
 	private function collideThings() {
+		collidePlayerWithGoal();		
 		collidePlayerWithTerrain();
 		collidePatrollersWithTerrain();
 		
@@ -80,6 +78,10 @@ class PlayState extends FlxSubState {
 		colorSwappables.push(tilemapObjWhite);
 		colorSwappables.push(tilemapObjRed);
 		colorSwappables.push(player);
+		
+		
+		for (swappable in colorSwappables)
+			swappable.setColors();
 	}
 	
 	private function paletteSwapCheck() {
@@ -87,6 +89,17 @@ class PlayState extends FlxSubState {
 			ColorPaletteManager.instance.addToIndex();
 			for (swappable in colorSwappables)
 				swappable.setColors();
+		}
+	}
+	
+	private function collidePlayerWithGoal() {
+		if (goal != null &&
+			goal.warped == player.warped &&
+			!player.isWarping &&
+			FlxG.overlap(goal, player)) {
+			
+			Reg.levelManager.progressOneLevel();
+			FlxG.switchState(new PlayState());
 		}
 	}
 	

@@ -27,8 +27,6 @@ class Player extends BaseEntity {
 	public function new(?X:Float=0, ?Y:Float=0, ?startWarped:Bool=false)  {
 		super(X, Y);
 		
-		acceleration.y = Reg.playerGravity;
-		
 		loadGraphic(AssetPaths.charRedPart__png, true, Reg.tileWidth, Reg.tileHeight);
 		animation.add("idle", [0, 1, 2, 3], 6, true);
 		animation.add("hurt", [4], 6, false);
@@ -40,6 +38,7 @@ class Player extends BaseEntity {
 		setSize(8, 13);
 		facing = FlxObject.RIGHT;
 		warped = startWarped;
+		acceleration.y = Reg.playerGravity * warpMultiplier;
 		
 		setColors();		
 		adjustBox();
@@ -147,7 +146,7 @@ class Standing extends FlxFSMState<Player> {
 		checkRun(owner);
 		
 		if ((FlxG.keys.justPressed.UP && !owner.warped) || (FlxG.keys.justPressed.DOWN && owner.warped))
-			owner.velocity.y = Reg.playerJumpForce;
+			owner.velocity.y = Reg.playerJumpForce * owner.warpMultiplier;
 	}
 	
 	private function checkRun(owner:Player):Void {
@@ -195,13 +194,10 @@ class Warping extends FlxFSMState<Player> {
 		owner.animation.pause();
 		owner.velocity.set(0, 0);
 		owner.acceleration.y = 0;
-		
-		Reg.playerGravity *= -1;
-		Reg.playerJumpForce *= -1;
 		owner.startWarpTweens();
 	}
 	
 	override public function exit(owner:Player):Void {
-		owner.acceleration.y = Reg.playerGravity;
+		owner.acceleration.y = Reg.playerGravity * owner.warpMultiplier;
 	}
 }

@@ -8,9 +8,8 @@ import interfaces.IColorSwappable;
  * ...
  * @author A. Cid
  */
-class Goal extends FlxSprite implements IColorSwappable
+class Goal extends BaseEntity
 {
-	private var warped:Bool = false;
 
 	public function new(?X:Float=0, ?Y:Float=0, ?isWarped:Bool=false) 
 	{
@@ -21,11 +20,19 @@ class Goal extends FlxSprite implements IColorSwappable
 		animation.add("whoa", [0, 1, 2, 3], 4, true);
 		animation.play("whoa");
 		
+		width = 12;
+		height = 12;
+		offset.set(2, 2);
+		x += 2;
+		y += 2;
+		
 		setColors();
 	}
 	
-	public function setColors() {
+	override public function setColors() {
 		color = warped ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
 	}
+	
+	override public function handleCollisionWithMap() {}
 	
 }

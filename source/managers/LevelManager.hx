@@ -17,7 +17,7 @@ class LevelManager {
 		if (LevelManager.instance.value.length == 0)
 			LevelManager.instance.init();
 		else
-			trace("Failed to re-boot LevelManager");
+			trace("LevelManager already booted");
 	}
 	
 	private function init() {
@@ -28,6 +28,10 @@ class LevelManager {
 				value.push(l);
 		else
 			value.push("famicase");
+	}
+	
+	public function progressOneLevel() {
+		levelIndex = (levelIndex + 1) % value.length;
 	}
 	
 	public function getCurrentLevelID():String {

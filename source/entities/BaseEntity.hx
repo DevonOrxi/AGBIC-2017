@@ -12,7 +12,7 @@ import interfaces.IMapCollidable;
 class BaseEntity extends FlxSprite implements IColorSwappable implements IMapCollidable {	
 	
 	public var warped(get, null):Bool = false;
-	private var warpMultiplier(get, null):Int;
+	public var warpMultiplier(get, null):Int;
 	
 	public function handleCollisionWithMap() {}
 	public function setColors() {}

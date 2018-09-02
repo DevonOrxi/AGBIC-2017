@@ -20,7 +20,7 @@ class ColorPaletteManager {
 		if (ColorPaletteManager.instance.value.length == 0)
 			ColorPaletteManager.instance.init();
 		else
-			trace("Failed to re-boot ColorPaletteManager");
+			trace("ColorPaletteManager already booted");
 	}
 	
 	private function init() {

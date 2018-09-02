@@ -15,7 +15,7 @@ class GeoTilemap extends FlxTilemap implements IColorSwappable
 	public var isTopColored(get, null):Bool = true;
 	
 	public function setColors() {
-		color = isTopColored ? ColorPaletteManager.instance.colorFront : ColorPaletteManager.instance.colorBack;
+		color = isTopColored ? Reg.colorPalette.colorFront : Reg.colorPalette.colorBack;
 	}
 	
 	public function init(topColored:Bool, isBackgroundTilemap: Bool) {
