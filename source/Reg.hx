@@ -2,6 +2,7 @@ package;
 import managers.ColorPaletteManager;
 import flixel.util.FlxColor;
 import managers.LevelManager;
+import managers.TransitionManager;
 import openfl.Assets;
 import haxe.Json;
 
@@ -31,6 +32,7 @@ class Reg {
 	static public var warpStatus:WarpStatus = NO_WARP;
 	static public var colorPalette:ColorPaletteManager = ColorPaletteManager.instance;
 	static public var levelManager:LevelManager = LevelManager.instance;
+	static public var transitionManager:TransitionManager = TransitionManager.instance;
 	static public var configData(get, null):Dynamic;
 	
 	static private var initialized:Bool = false;

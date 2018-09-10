@@ -2,6 +2,7 @@ package states;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.ui.FlxUIState;
 import flixel.text.FlxText;
 import managers.ColorPaletteManager;
@@ -16,6 +17,9 @@ class EndState extends FlxUIState
 	override public function create():Void {
 		super.create();
 		
+		transIn = FlxTransitionableState.defaultTransIn;
+		transOut = FlxTransitionableState.defaultTransOut;
+		
 		Reg.initExternalData();
 		
 		var back = new FlxSprite();
@@ -28,6 +32,13 @@ class EndState extends FlxUIState
 		
 		add(back);
 		add(text);
+	}
+	
+	override public function update(elapsed:Float):Void 
+	{
+		super.update(elapsed);
+		
+		if (FlxG.keys.justPressed.R) { FlxG.switchState(new EndState()); }
 	}
 	
 }
