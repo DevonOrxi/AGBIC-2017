@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.ui.FlxUIState;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import managers.ColorPaletteManager;
 
@@ -11,8 +12,9 @@ import managers.ColorPaletteManager;
  * ...
  * @author Ariel Cid
  */
-class EndState extends FlxUIState 
+class StartState extends FlxUIState 
 {
+	private var music = new FlxSound();
 
 	override public function create():Void {
 		super.create();
@@ -22,8 +24,11 @@ class EndState extends FlxUIState
 		
 		Reg.initExternalData();
 		
+		music = FlxG.sound.load("assets/sounds/music.ogg", 1, true);
+		music.play(false);
+		
 		var back = new FlxSprite();
-		var text = new FlxText(0, 0, 0, "THANKS FOR PLAYING!", 32);
+		var text = new FlxText(0, 0, 0, "G E O", 64);
 		back.makeGraphic(FlxG.width, FlxG.height);
 		back.color = Reg.colorPalette.colorBack;
 		text.font = AssetPaths.m6x11__ttf;
@@ -36,6 +41,11 @@ class EndState extends FlxUIState
 	
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
+		
+		var next = FlxG.keys.anyJustPressed(["UP", "DOWN", "LEFT", "RIGHT"]);
+		
+		if (next)
+			FlxG.switchState(new PlayState());
 	}
 	
 }

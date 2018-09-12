@@ -51,7 +51,7 @@ class PlayState extends FlxUIState {
 	}
 	
 	private function collideThings() {
-		collidePlayerWithGoal();		
+		collidePlayerWithGoal();
 		collidePlayerWithTerrain();
 		collidePatrollersWithTerrain();
 		
@@ -228,20 +228,20 @@ class PlayState extends FlxUIState {
 	private function placeEntities(entityName:String, entityData:Xml):Void {
 		var X = Std.parseInt(entityData.get("x"));
 		var Y = Std.parseInt(entityData.get("y"));
+		var isWarped = Std.string(entityData.get("warped")) == "true" ? true : false ;
 		
 		switch (entityName) {
 			case "player":
-				player.x = X;
-				player.y = Y;
+				player = new Player(X, Y, isWarped);
+				player.x += player.offset.x / 2;
+				player.y += (player.offset.y / 2  + 1) * player.warpMultiplier;
 			case "patroller":
 				var goingRight = Std.string(entityData.get("goingRight")) == "true" ? true : false ;
-				var isWarped = Std.string(entityData.get("warped")) == "true" ? true : false ;
 				var patroller = new Patroller(X, Y, goingRight, isWarped);
 				
 				patrollerGroup.add(patroller);
 				colorSwappables.push(patroller);
 			case "goal":
-				var isWarped = Std.string(entityData.get("warped")) == "true" ? true : false;
 				goal = new Goal(X, Y, isWarped);
 				colorSwappables.push(goal);
 		}
