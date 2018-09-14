@@ -53,8 +53,11 @@ class PlayState extends FlxUIState {
 		collidePlayerWithTerrain();
 		collidePatrollersWithTerrain();
 		
-		if (FlxG.overlap(patrollerGroup, player))
+		if (FlxG.overlap(patrollerGroup, player)) {
+			FlxG.sound.play(AssetPaths.land__ogg);
+			player.animation.play("hurt");
 			FlxG.switchState(new PlayState());
+		}
 		
 		FlxG.collide(patrollerGroup, null, collidedPatrollersEachOther);
 		FlxG.collide(boundaries, player);
@@ -98,6 +101,7 @@ class PlayState extends FlxUIState {
 			!player.isWarping &&
 			FlxG.overlap(goal, player)) {
 			
+			FlxG.sound.play(AssetPaths.warp2__ogg, 0.8);
 			Reg.levelManager.progressOneLevel();
 		}
 	}
@@ -228,14 +232,14 @@ class PlayState extends FlxUIState {
 		var X = Std.parseInt(entityData.get("x"));
 		var Y = Std.parseInt(entityData.get("y"));
 		var isWarped = Std.string(entityData.get("warped")) == "True" ? true : false ;
+		var goingRight = Std.string(entityData.get("goingRight")) == "True" ? true : false ;
 		
 		switch (entityName) {
 			case "player":
-				player = new Player(X, Y, isWarped);
+				player = new Player(X, Y, isWarped, goingRight);
 				player.x += player.offset.x;
 				player.y += player.offset.y;
 			case "patroller":
-				var goingRight = Std.string(entityData.get("goingRight")) == "True" ? true : false ;
 				var patroller = new Patroller(X, Y, goingRight, isWarped);
 				patroller.x += patroller.offset.x;
 				patroller.y += patroller.offset.y;

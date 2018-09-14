@@ -1,4 +1,5 @@
 package;
+import flixel.FlxG;
 import flixel.system.FlxSound;
 import flixel.system.FlxSoundGroup;
 import managers.ColorPaletteManager;
@@ -36,7 +37,6 @@ class Reg {
 	static public var levelManager:LevelManager = LevelManager.instance;
 	static public var transitionManager:TransitionManager = TransitionManager.instance;
 	static public var configData(get, null):Dynamic;
-	static public var globalSoundGroup(get, null):FlxSoundGroup = new FlxSoundGroup();
 	
 	static private var initialized:Bool = false;
 	
@@ -47,16 +47,16 @@ class Reg {
 			
 			ColorPaletteManager.boot();
 			LevelManager.boot();
+			FlxG.sound.load("assets/sounds/music.ogg", 1, true, null, false, true);
 			
 			initialized = true;
 		}
 	}
 	
-	static function get_configData():Dynamic {
-		return configData;
+	static private function playSomeFuckingMusicAlready() {
 	}
 	
-	static function get_globalSoundGroup():FlxSoundGroup {
-		return globalSoundGroup;
+	static function get_configData():Dynamic {
+		return configData;
 	}
 }

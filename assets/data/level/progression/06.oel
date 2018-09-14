@@ -62,7 +62,7 @@
   <entities>
     <patroller id="0" x="192" y="80" warped="False" goingRight="False" />
     <patroller id="3" x="96" y="80" warped="False" goingRight="False" />
-    <player id="4" x="224" y="64" warped="False" />
+    <player id="4" x="224" y="64" warped="False" goingRight="False" />
     <goal id="1" x="224" y="160" warped="True" />
     <patroller id="2" x="192" y="160" warped="True" goingRight="False" />
   </entities>

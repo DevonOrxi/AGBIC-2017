@@ -16,7 +16,7 @@
     <Width>25600</Width>
     <Height>24000</Height>
   </LevelMaximumSize>
-  <Filename>D:\Code\HaxeFlixel\Famicase\assets\data\level\famicase.oep</Filename>
+  <Filename>C:\Projects\HaxeFlixel\AGBIC-2017\assets\data\level\famicase.oep</Filename>
   <AngleMode>Radians</AngleMode>
   <CameraEnabled>false</CameraEnabled>
   <CameraSize>
@@ -141,6 +141,7 @@
       </ImageDefinition>
       <ValueDefinitions>
         <ValueDefinition xsi:type="BoolValueDefinition" Name="warped" Default="false" />
+        <ValueDefinition xsi:type="BoolValueDefinition" Name="goingRight" Default="true" />
       </ValueDefinitions>
       <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
     </EntityDefinition>

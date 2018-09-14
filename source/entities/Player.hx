@@ -147,7 +147,7 @@ class Standing extends FlxFSMState<Player> {
 		
 		if ((FlxG.keys.justPressed.UP && !owner.warped) || (FlxG.keys.justPressed.DOWN && owner.warped)) {
 			owner.velocity.y = Reg.playerJumpForce * owner.warpMultiplier;
-			FlxG.sound.play(AssetPaths.jump__ogg, 0.6);
+			FlxG.sound.play(AssetPaths.jump__ogg, 0.4);
 		}
 	}
 	
@@ -197,6 +197,7 @@ class Warping extends FlxFSMState<Player> {
 		owner.velocity.set(0, 0);
 		owner.acceleration.y = 0;
 		owner.startWarpTweens();
+		FlxG.sound.play(AssetPaths.warp__ogg, 0.4);
 	}
 	
 	override public function exit(owner:Player):Void {

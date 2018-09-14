@@ -24,7 +24,7 @@ class EndState extends FlxUIState
 		
 		var back = new FlxSprite();
 		var text = new FlxText(0, 0, 0, "THANKS FOR PLAYING", 32);
-		var text2 = new FlxText(0, 0, 0, "(MORE STUFF COMING SOON)", 16);
+		var text2 = new FlxText(0, 0, 0, "(MORE LEVELS COMING SOON)", 16);
 		back.makeGraphic(FlxG.width, FlxG.height);
 		back.color = Reg.colorPalette.colorBack;
 		text.font = AssetPaths.m6x11__ttf;
