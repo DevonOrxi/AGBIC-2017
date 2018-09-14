@@ -24,8 +24,8 @@ class StartState extends FlxUIState
 		
 		Reg.initExternalData();
 		
-		music = FlxG.sound.load("assets/sounds/music.ogg", 1, true);
-		music.play(false);
+		music = FlxG.sound.load(AssetPaths.music__ogg, 1, true, Reg.globalSoundGroup);
+		music.play();
 		
 		var back = new FlxSprite();
 		var text = new FlxText(0, 0, 0, "G E O", 64);

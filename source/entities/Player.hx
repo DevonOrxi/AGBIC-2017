@@ -24,7 +24,7 @@ class Player extends BaseEntity {
 	public var leftFoot:FlxSprite;
 	public var rightFoot:FlxSprite;
 
-	public function new(?X:Float=0, ?Y:Float=0, ?startWarped:Bool=false)  {
+	public function new(?X:Float=0, ?Y:Float=0, ?startWarped:Bool=false, ?goingRight:Bool=true)  {
 		super(X, Y);
 		
 		loadGraphic(AssetPaths.charRedPart__png, true, Reg.tileWidth, Reg.tileHeight);
@@ -40,7 +40,7 @@ class Player extends BaseEntity {
 		warped = startWarped;
 		acceleration.y = Reg.playerGravity * warpMultiplier;
 		
-		setColors();		
+		setColors();
 		adjustBox();
 		
 		fsm = new FlxFSM<Player>(this);
@@ -145,8 +145,10 @@ class Standing extends FlxFSMState<Player> {
 		
 		checkRun(owner);
 		
-		if ((FlxG.keys.justPressed.UP && !owner.warped) || (FlxG.keys.justPressed.DOWN && owner.warped))
+		if ((FlxG.keys.justPressed.UP && !owner.warped) || (FlxG.keys.justPressed.DOWN && owner.warped)) {
 			owner.velocity.y = Reg.playerJumpForce * owner.warpMultiplier;
+			FlxG.sound.play(AssetPaths.jump__ogg, 0.6);
+		}
 	}
 	
 	private function checkRun(owner:Player):Void {

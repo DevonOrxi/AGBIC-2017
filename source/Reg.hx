@@ -1,4 +1,6 @@
 package;
+import flixel.system.FlxSound;
+import flixel.system.FlxSoundGroup;
 import managers.ColorPaletteManager;
 import flixel.util.FlxColor;
 import managers.LevelManager;
@@ -34,6 +36,7 @@ class Reg {
 	static public var levelManager:LevelManager = LevelManager.instance;
 	static public var transitionManager:TransitionManager = TransitionManager.instance;
 	static public var configData(get, null):Dynamic;
+	static public var globalSoundGroup(get, null):FlxSoundGroup = new FlxSoundGroup();
 	
 	static private var initialized:Bool = false;
 	
@@ -51,5 +54,9 @@ class Reg {
 	
 	static function get_configData():Dynamic {
 		return configData;
+	}
+	
+	static function get_globalSoundGroup():FlxSoundGroup {
+		return globalSoundGroup;
 	}
 }

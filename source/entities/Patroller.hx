@@ -26,7 +26,10 @@ class Patroller extends BaseEntity {
 		setProperHorizontalVelocity();
 		scale.x = -goingRightMultiplier();
 		
+		
 		warped = isWarped;
+		setSize(12, 13);
+		offset.set(2, warped ? 0 : 3);
 		scale.y = warpMultiplier;
 		
 		setColors();

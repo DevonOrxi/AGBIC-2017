@@ -6,6 +6,7 @@ import entities.Patroller;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.ui.FlxUIState;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.system.FlxSound;
 import haxe.Json;
 import flixel.FlxSprite;
 import flixel.FlxG;
@@ -29,15 +30,12 @@ class PlayState extends FlxUIState {
 	private var colorSwappables:Array<IColorSwappable> = [];
 	private var boundaries = new FlxTypedGroup<FlxSprite>();
 	private var patrollerGroup = new FlxTypedGroup<Patroller>();
-	
-	private var enemy:Patroller;
 
 	override public function create():Void {
 		super.create();
 		
 		Reg.initExternalData();
 		player = new Player();
-
 		setTilemaps();
 		createBoundaries();
 		setColorSwappableArray();
@@ -104,6 +102,7 @@ class PlayState extends FlxUIState {
 		}
 	}
 	
+	// TODO: REFACTOR (SKIP FOR)
 	private function collidePatrollersWithTerrain() {
 		for (p in patrollerGroup) {
 			collideSinglePatrollerWithTerrain(p);
@@ -131,16 +130,16 @@ class PlayState extends FlxUIState {
 		if (!p2.isFlipping) { p2.handleCollisionWithMap(); }
 	}
 	
-	private function collideSinglePatrollerWithTerrain(p:Patroller) {
-		if (!p.isFlipping) {
-			if (p.warped) {
-				FlxG.collide(tilemapBgWhite, p);
-				FlxG.collide(tilemapObjRed, p);
-			} else {
-				FlxG.collide(tilemapBgRed, p);
-				FlxG.collide(tilemapObjWhite, p);
-			}
-		}
+	private function collideSinglePatrollerWithTerrain(p:Patroller):Bool {
+		if (p.isFlipping)
+			return false;
+		
+		if (p.warped)
+			return (FlxG.collide(tilemapBgWhite, p) || FlxG.collide(tilemapObjRed, p)) ? true : false;
+		else
+			return (FlxG.collide(tilemapBgRed, p) || FlxG.collide(tilemapObjWhite, p)) ? true : false;
+		
+		return false;
 	}
 	
 	private function collidePlayerWithTerrain() {
@@ -228,16 +227,18 @@ class PlayState extends FlxUIState {
 	private function placeEntities(entityName:String, entityData:Xml):Void {
 		var X = Std.parseInt(entityData.get("x"));
 		var Y = Std.parseInt(entityData.get("y"));
-		var isWarped = Std.string(entityData.get("warped")) == "true" ? true : false ;
+		var isWarped = Std.string(entityData.get("warped")) == "True" ? true : false ;
 		
 		switch (entityName) {
 			case "player":
 				player = new Player(X, Y, isWarped);
-				player.x += player.offset.x / 2;
-				player.y += (player.offset.y / 2  + 1) * player.warpMultiplier;
+				player.x += player.offset.x;
+				player.y += player.offset.y;
 			case "patroller":
-				var goingRight = Std.string(entityData.get("goingRight")) == "true" ? true : false ;
+				var goingRight = Std.string(entityData.get("goingRight")) == "True" ? true : false ;
 				var patroller = new Patroller(X, Y, goingRight, isWarped);
+				patroller.x += patroller.offset.x;
+				patroller.y += patroller.offset.y;
 				
 				patrollerGroup.add(patroller);
 				colorSwappables.push(patroller);
