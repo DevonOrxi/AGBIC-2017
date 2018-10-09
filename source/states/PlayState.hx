@@ -191,7 +191,7 @@ class PlayState extends FlxUIState {
 				case 1:
 					//	TOP
 					sprite = new FlxSprite(-Reg.tileWidth, -Reg.tileHeight);
-					sprite.makeGraphic(width + 2 * Reg.tileHeight, Reg.tileHeight);
+					sprite.makeGraphic(width + 2 * Reg.tileWidth, Reg.tileHeight);
 				case 2:
 					//	RIGHT
 					sprite = new FlxSprite(width, -Reg.tileHeight);
@@ -199,7 +199,7 @@ class PlayState extends FlxUIState {
 				case 3:
 					//	BOTTOM
 					sprite = new FlxSprite(-Reg.tileWidth, height);
-					sprite.makeGraphic(width + 2 * Reg.tileHeight, Reg.tileHeight);
+					sprite.makeGraphic(width + 2 * Reg.tileWidth, Reg.tileHeight);
 			}
 			sprite.immovable = true;
 			boundaries.add(sprite);
@@ -223,7 +223,7 @@ class PlayState extends FlxUIState {
 		tilemapObjRed.init(true, false);
 		
 		FlxG.camera.setScrollBounds(0, tilemapBgWhite.width, 0, tilemapBgWhite.height);
-		FlxG.worldBounds.set(-Reg.tileWidth, -Reg.tileHeight, tilemapBgWhite.width + Reg.tileWidth, tilemapBgWhite.height + Reg.tileHeight);
+		FlxG.worldBounds.set(-Reg.tileWidth, -Reg.tileHeight, tilemapBgWhite.width + Reg.tileWidth + 1, tilemapBgWhite.height + Reg.tileHeight + 1);
 		
 		loader.loadEntities(placeEntities, "entities");
 	}
